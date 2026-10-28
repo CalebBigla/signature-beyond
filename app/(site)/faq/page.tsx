@@ -31,7 +31,7 @@ export default async function FaqPage() {
                 <details key={`${c.id}-${idx}`} className="group border-b border-stone-200">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 min-h-11 py-5 text-left text-body font-medium [&::-webkit-details-marker]:hidden">
                     <span>{item.q}</span>
-                    <span aria-hidden="true" className="text-xl leading-none transition-transform group-open:rotate-45">+</span>
+                    <span aria-hidden="true" className="text-xl leading-none transition-transform group-open:rotate-45 motion-reduce:transition-none">+</span>
                   </summary>
                   <div className="max-w-measure pb-6 text-body text-stone-700">
                     {item.a.split(/\n\s*\n/).map((para, i) => <p key={i} className={i ? "mt-3" : undefined}>{para}</p>)}
