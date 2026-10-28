@@ -1,22 +1,33 @@
 import Link from "next/link";
 import type { Artwork } from "@/types";
-import { AVAILABILITY_LABELS, formatPrice } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { ArtworkImage } from "./ArtworkImage";
+import { AvailabilityBadge } from "./AvailabilityBadge";
 
-export function ArtworkCard({ artwork }: { artwork: Artwork }) {
+/** Gallery-label caption: artist, title, year and medium, then price on its own line. */
+export function ArtworkCaption({ artwork, headingLevel = 3 }: { artwork: Artwork; headingLevel?: 2 | 3 }) {
+  const Title = `h${headingLevel}` as const;
+  const meta = [artwork.year, artwork.medium].filter(Boolean).join(", ");
   return (
-    <Link href={`/artworks/${artwork.slug}`} className="group block overflow-hidden rounded border border-stone-200 bg-white">
+    <div className="mt-5">
+      {artwork.artist && <p className="text-eyebrow font-medium uppercase text-stone-600">{artwork.artist.name}</p>}
+      <Title className="mt-2 font-serif text-[1.375rem] italic leading-snug text-ink">{artwork.title}</Title>
+      {meta && <p className="mt-1 text-caption text-stone-600">{meta}</p>}
+      <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink">
+        <span>{formatPrice(artwork)}</span>
+        {artwork.availability !== "on_request" && <AvailabilityBadge availability={artwork.availability} />}
+      </p>
+    </div>
+  );
+}
+
+export function ArtworkCard({ artwork, aspect, sizes }: { artwork: Artwork; aspect?: string; sizes?: string }) {
+  return (
+    <Link href={`/artworks/${artwork.slug}`} className="group block">
       <div className="overflow-hidden">
-        <ArtworkImage artwork={artwork} className="transition-transform duration-500 group-hover:scale-105" />
+        <ArtworkImage artwork={artwork} aspect={aspect} sizes={sizes} />
       </div>
-      <div className="p-3">
-        <h3 className="text-sm font-medium">{artwork.title}</h3>
-        <p className="text-xs text-stone-500">{artwork.artist?.name ?? "Artist to be confirmed"}</p>
-        <p className="mt-1 flex items-center justify-between text-xs">
-          <span>{formatPrice(artwork)}</span>
-          <span className="text-stone-500">{AVAILABILITY_LABELS[artwork.availability]}</span>
-        </p>
-      </div>
+      <ArtworkCaption artwork={artwork} />
     </Link>
   );
 }
