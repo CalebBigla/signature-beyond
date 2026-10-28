@@ -37,9 +37,9 @@ export default async function ArtworksPage({
         )}
 
         <section aria-label="Artwork results">
-          <p className="eyebrow mb-8" aria-live="polite">
+          <h2 className="eyebrow mb-8" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "work" : "works"}
-          </p>
+          </h2>
 
           {items.length === 0 ? (
             <div className="border-y border-stone-200 py-16 text-center">
