@@ -82,7 +82,6 @@ export default async function ArtworkPage({ params }: Params) {
     [
       ["Medium", artwork.medium],
       ["Dimensions", artwork.dimensions],
-      ["Year", artwork.year ? String(artwork.year) : null],
     ] as const
   ).filter(([, v]) => v);
 
