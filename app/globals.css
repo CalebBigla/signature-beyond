@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+body { @apply bg-paper text-stone-800 antialiased; }
+
+/* Dark theme for the admin area only. The admin shell adds "admin-dark" to its wrapper. */
+.admin-dark { color-scheme: dark; }
+.admin-dark .bg-white { background-color: #1c1917; }
+.admin-dark .bg-stone-50, .admin-dark .bg-stone-100 { background-color: #292524; }
+.admin-dark .hover\:bg-stone-100:hover { background-color: #292524; }
+.admin-dark .border-stone-200, .admin-dark .border-stone-300 { border-color: #44403c; }
+.admin-dark .divide-stone-100 > :not([hidden]) ~ :not([hidden]),
+.admin-dark .divide-stone-200 > :not([hidden]) ~ :not([hidden]) { border-color: #44403c; }
+.admin-dark .text-stone-700, .admin-dark .text-stone-800 { color: #e7e5e4; }
+.admin-dark .text-stone-600 { color: #d6d3d1; }
+.admin-dark .text-stone-500 { color: #a8a29e; }
+.admin-dark .text-red-700 { color: #f87171; }
+.admin-dark .text-green-800 { color: #4ade80; }
+.admin-dark input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]),
+.admin-dark select,
+.admin-dark textarea { background-color: #0c0a09; color: #e7e5e4; border-color: #57534e; }
+.admin-dark .bg-ink { background-color: #e7e5e4; color: #0c0a09; }
