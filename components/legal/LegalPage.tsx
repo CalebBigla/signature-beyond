@@ -16,10 +16,10 @@ export async function LegalPage({ pageKey }: { pageKey: LegalKey }) {
 
   return (
     <>
-      <PageBanner title={page.title} />
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <PageBanner eyebrow="Legal" title={page.title} />
+      <article className="container-site max-w-4xl pb-section">
         {page.showDraftNotice && (
-          <p className="mb-8 rounded border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="mb-10 border-l-2 border-amber-500 bg-amber-50 p-4 text-sm text-amber-900">
             <strong>Draft for review.</strong> This page has not yet been reviewed by the gallery or a legal adviser, and is not legal advice. Text in [square brackets] still needs confirmation.{page.updated && <> Last updated: {longDate(page.updated)}.</>}
           </p>
         )}
@@ -28,9 +28,9 @@ export async function LegalPage({ pageKey }: { pageKey: LegalKey }) {
         {sections.map((sec, i) => {
           const num = sec.heading !== null ? ++n : null;
           return (
-            <section key={i} aria-labelledby={sec.heading !== null ? `sec-${i}` : undefined} className="mb-8">
-              {sec.heading !== null && <h2 id={`sec-${i}`} className="mb-3 font-serif text-2xl">{num}. {sec.heading}</h2>}
-              <div className="space-y-3 text-sm leading-relaxed text-stone-700">
+            <section key={i} aria-labelledby={sec.heading !== null ? `sec-${i}` : undefined} className="mb-10">
+              {sec.heading !== null && <h2 id={`sec-${i}`} className="mb-4 font-serif text-h3 font-medium">{num}. {sec.heading}</h2>}
+              <div className="max-w-measure space-y-4 text-body text-stone-700">
                 {sec.blocks.map((b, j) =>
                   b.type === "p" ? (
                     <p key={j} className="whitespace-pre-line">{b.text}</p>

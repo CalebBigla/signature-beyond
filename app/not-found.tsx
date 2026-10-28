@@ -1,11 +1,12 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/Button";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-xl px-4 py-24 text-center">
-      <h1 className="font-serif text-4xl">Page not found</h1>
-      <p className="mt-3 text-sm text-stone-600">This page does not exist or is not published.</p>
-      <Link href="/" className="mt-6 inline-block rounded bg-ink px-5 py-3 text-sm text-white">Back to home</Link>
+    <div className="site container-site py-section text-center">
+      <p className="eyebrow">404</p>
+      <h1 className="mt-5 font-serif text-h1 font-medium">Page not found</h1>
+      <p className="mx-auto mt-5 max-w-md text-body text-stone-600">This page does not exist or is not published.</p>
+      <ButtonLink href="/" className="mt-10">Back to home</ButtonLink>
     </div>
   );
 }

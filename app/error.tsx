@@ -1,13 +1,13 @@
 "use client";
+import { Button } from "@/components/ui/Button";
 
 export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
   return (
-    <div className="mx-auto max-w-xl px-4 py-24 text-center">
-      <h1 className="font-serif text-4xl">Something went wrong</h1>
-      <p className="mt-3 text-sm text-stone-600">{error.message}</p>
-      <button type="button" onClick={reset} className="mt-6 rounded bg-ink px-5 py-3 text-sm text-white">
-        Try again
-      </button>
+    <div className="site container-site py-section text-center">
+      <p className="eyebrow">Error</p>
+      <h1 className="mt-5 font-serif text-h1 font-medium">Something went wrong</h1>
+      <p className="mx-auto mt-5 max-w-md text-body text-stone-600">{error.message}</p>
+      <Button type="button" onClick={reset} className="mt-10">Try again</Button>
     </div>
   );
 }
