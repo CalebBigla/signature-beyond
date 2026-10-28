@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
-import Image from "next/image"
 import Link from "next/link";
 import { getPublishedArtworks } from "@/lib/services";
 import { filterArtworks, filterOptions, pageHref, paginate, parseQuery } from "@/lib/artwork-filters";
 import { ArtworkCard } from "@/components/artworks/ArtworkCard";
 import { ArtworkFilters } from "@/components/artworks/ArtworkFilters";
+import { PageBanner } from "@/components/ui/PageBanner";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Artworks",
   description: "Browse the Signature Beyond collection of contemporary African art.",
   alternates: { canonical: "/artworks" },
 };
+
+const pager = "inline-flex min-h-11 items-center px-2 underline decoration-stone-300 underline-offset-[6px] hover:decoration-brand";
 
 export default async function ArtworksPage({
   searchParams,
@@ -24,52 +27,44 @@ export default async function ArtworksPage({
 
   return (
     <>
-      <section className="relative py-14 text-white overflow-hidden">
-  <Image
-    src="/images/background-1.jpeg"
-    alt="Artworks background"
-    fill
-    className="object-cover"
-  />
-  <div className="absolute inset-0 bg-black/60" />
-  
-  <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-    <h1 className="font-serif text-5xl">Artworks</h1>
-    <p className="mt-3 max-w-md text-sm text-white/80">
-      Discover exceptional works from leading and emerging African artists.
-    </p>
-  </div>
-</section>
+      <PageBanner eyebrow="The collection" title="Artworks" subtitle="Discover exceptional works from leading and emerging African artists." />
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[220px_1fr]">
-        <aside aria-label="Filter artworks">
-          <ArtworkFilters query={query} options={filterOptions(all)} />
-        </aside>
+      <div className="container-site pb-section">
+        {all.length > 0 && (
+          <section aria-label="Filter artworks" className="mb-12 md:mb-16">
+            <ArtworkFilters query={query} options={filterOptions(all)} />
+          </section>
+        )}
 
         <section aria-label="Artwork results">
-          <p className="mb-4 text-sm text-stone-500" aria-live="polite">
-            {filtered.length} {filtered.length === 1 ? "artwork" : "artworks"}
+          <p className="eyebrow mb-8" aria-live="polite">
+            {filtered.length} {filtered.length === 1 ? "work" : "works"}
           </p>
 
           {items.length === 0 ? (
-            <p className="rounded border border-dashed border-stone-300 p-8 text-sm text-stone-500">
-              {all.length === 0
-                ? "No artworks have been published yet."
-                : "No artworks match your filters. Try resetting them."}
-            </p>
+            <div className="border-y border-stone-200 py-16 text-center">
+              <p className="font-serif text-h3">{all.length === 0 ? "The collection is being prepared." : "No works match these filters."}</p>
+              <p className="mt-3 text-sm text-stone-600">
+                {all.length === 0 ? "No artworks have been published yet." : <>Try removing a filter, or <Link href="/artworks" className="underline underline-offset-4">view all works</Link>.</>}
+              </p>
+            </div>
           ) : (
-            <ul className="grid grid-cols-2 gap-4 md:grid-cols-3">
-              {items.map((a) => (
-                <li key={a.id}><ArtworkCard artwork={a} /></li>
+            <ul className="grid grid-cols-2 gap-x-5 gap-y-14 md:grid-cols-3 md:gap-x-8 md:gap-y-20">
+              {items.map((a, i) => (
+                <li key={a.id}>
+                  <Reveal delay={(i % 3) * 0.06}>
+                    <ArtworkCard artwork={a} sizes="(min-width: 768px) 30vw, 50vw" />
+                  </Reveal>
+                </li>
               ))}
             </ul>
           )}
 
           {totalPages > 1 && (
-            <nav aria-label="Pagination" className="mt-8 flex items-center justify-center gap-4 text-sm">
-              {page > 1 && <Link href={pageHref(query, page - 1)}>← Previous</Link>}
-              <span>Page {page} of {totalPages}</span>
-              {page < totalPages && <Link href={pageHref(query, page + 1)}>Next →</Link>}
+            <nav aria-label="Pagination" className="mt-20 flex items-center justify-between border-t border-stone-200 pt-6 text-sm">
+              {page > 1 ? <Link href={pageHref(query, page - 1)} className={pager}>← Previous</Link> : <span />}
+              <span className="text-stone-600">Page {page} of {totalPages}</span>
+              {page < totalPages ? <Link href={pageHref(query, page + 1)} className={pager}>Next →</Link> : <span />}
             </nav>
           )}
         </section>
