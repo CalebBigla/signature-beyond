@@ -1,43 +1,64 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/services";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { subjectFromParams } from "@/lib/enquiry";
 import { PageBanner } from "@/components/ui/PageBanner";
 import { EnquiryForm } from "@/components/forms/EnquiryForm";
+import { ButtonLink } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: "Contact", description: "Contact Signature Beyond." };
 
-export default async function ContactPage() {
-  const s = await getSettings();
+const link = "text-ink underline decoration-stone-300 underline-offset-4 transition-colors hover:decoration-brand";
+
+export default async function ContactPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const [s, params] = await Promise.all([getSettings(), searchParams]);
   const whatsapp = buildWhatsAppUrl(s);
   const emails = [s.primaryEmail, ...s.additionalEmails].filter(Boolean);
   const hasAnything = Boolean(whatsapp || emails.length || s.phoneNumbers.length || s.address);
+  const mapUrl = s.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}` : null;
 
   return (
     <>
-      <PageBanner title="Contact" subtitle="We would love to hear from you." />
-      <div className="mx-auto max-w-3xl space-y-6 px-4 py-12 text-sm sm:px-6">
-        {!hasAnything && (
-          <p className="rounded border border-dashed border-stone-300 p-6 text-stone-500">
-            Contact details have not been added yet. Add them in website settings.
-          </p>
-        )}
-        {s.address && <p><strong className="block">Address</strong>{s.address}</p>}
-        {s.phoneNumbers.length > 0 && (
-          <p><strong className="block">Phone</strong>
-            {s.phoneNumbers.map((p) => <a key={p} href={`tel:${p.replace(/\s/g, "")}`} className="mr-4 underline">{p}</a>)}
-          </p>
-        )}
-        {emails.length > 0 && (
-          <p><strong className="block">Email</strong>
-            {emails.map((e) => <a key={e} href={`mailto:${e}`} className="mr-4 underline">{e}</a>)}
-          </p>
-        )}
-        {whatsapp && (
-          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-block rounded bg-whatsapp px-5 py-3 font-medium text-white">
-            Chat on WhatsApp
-          </a>
-        )}
-        <EnquiryForm />
+      <PageBanner eyebrow="Contact" title="Contact the gallery" subtitle="We would love to hear from you." />
+      <div className="container-site grid gap-16 pb-section lg:grid-cols-12">
+        <aside aria-label="Gallery contact details" className="space-y-10 lg:col-span-4">
+          {!hasAnything && (
+            <p className="border-y border-stone-200 py-6 text-sm text-stone-600">Contact details have not been added yet. Add them in website settings.</p>
+          )}
+          {s.address && (
+            <div>
+              <h2 className="eyebrow">Visit</h2>
+              <address className="mt-3 whitespace-pre-line font-serif text-h3 not-italic leading-snug text-ink">{s.address}</address>
+              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className={`mt-3 inline-flex min-h-11 items-center text-sm ${link}`}>Open in Maps</a>}
+            </div>
+          )}
+          {s.phoneNumbers.length > 0 && (
+            <div>
+              <h2 className="eyebrow">Telephone</h2>
+              <ul className="mt-3 space-y-1">
+                {s.phoneNumbers.map((p) => <li key={p}><a href={`tel:${p.replace(/\s/g, "")}`} className={`inline-flex min-h-9 items-center text-body ${link}`}>{p}</a></li>)}
+              </ul>
+            </div>
+          )}
+          {emails.length > 0 && (
+            <div>
+              <h2 className="eyebrow">Email</h2>
+              <ul className="mt-3 space-y-1">
+                {emails.map((e) => <li key={e}><a href={`mailto:${e}`} className={`inline-flex min-h-9 items-center break-all text-body ${link}`}>{e}</a></li>)}
+              </ul>
+            </div>
+          )}
+          {whatsapp && (
+            <div>
+              <h2 className="eyebrow">WhatsApp</h2>
+              <ButtonLink href={whatsapp} variant="secondary" className="mt-1">Chat with the gallery</ButtonLink>
+            </div>
+          )}
+        </aside>
+
+        <div className="border-t border-stone-200 pt-12 lg:col-span-7 lg:col-start-6 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+          <EnquiryForm defaultSubject={subjectFromParams(params.subject)} />
+        </div>
       </div>
     </>
   );
