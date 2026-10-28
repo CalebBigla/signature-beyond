@@ -5,8 +5,8 @@ import { Providers } from "@/components/ui/Providers";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { SITE_URL } from "@/lib/site";
 
-const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-serif" });
-const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600"], style: ["normal", "italic"], display: "swap", variable: "--font-serif" });
+const sans = Inter({ subsets: ["latin"], display: "swap", variable: "--font-sans" });
 
 const description = "Signature Beyond: contemporary African art, exhibitions, auctions and editorial.";
 

@@ -2,11 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens (see docs/DESIGN.md). Tailwind reads --ink; the rest are for plain CSS. */
+:root {
+  --ink: 11 18 32; /* original navy, kept for the admin area */
+  --brand: #ea800c;
+  --brand-deep: #a35700;
+  --paper: #faf8f5;
+  --bone: #f2eee8;
+  --hairline: #e7e5e4; /* stone-200 */
+}
+/* The public site uses a warm near-black instead (#14110f). */
+.site { --ink: 20 17 15; }
+
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
 body { @apply bg-paper text-stone-800 antialiased; }
+
+@layer base {
+  .site { @apply text-ink; }
+  .site :focus-visible { outline: 2px solid var(--brand-deep); outline-offset: 3px; }
+  .site .on-dark :focus-visible { outline-color: var(--brand); }
+  .site ::selection { background: #f6d9b5; color: rgb(20 17 15); }
+}
+
+@layer components {
+  /* Uppercase label: "LOT 12", "CURRENT EXHIBITION", "EST. 1992". */
+  .eyebrow { @apply text-eyebrow font-medium uppercase text-stone-600; }
+  .on-dark .eyebrow { @apply text-white/70; }
+  .container-site { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10; }
+  /* Long-form text: paragraphs, pull quotes and figure captions. */
+  .prose-gallery { @apply max-w-measure text-body text-stone-700; }
+  .prose-gallery > * + * { @apply mt-6; }
+  .prose-gallery blockquote { @apply my-10 border-l border-brand pl-6 font-serif text-h3 italic text-ink; }
+}
 
 /* Dark theme for the admin area only. The admin shell adds "admin-dark" to its wrapper. */
 .admin-dark { color-scheme: dark; }

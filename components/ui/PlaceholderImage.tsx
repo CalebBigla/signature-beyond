@@ -3,9 +3,9 @@ export function PlaceholderImage({ className = "" }: { className?: string }) {
     <div
       role="img"
       aria-label="Image placeholder: artwork photo to be supplied"
-      className={`flex items-center justify-center bg-gradient-to-br from-stone-300 to-stone-500 text-xs uppercase tracking-widest text-stone-700 ${className}`}
+      className={`flex items-center justify-center bg-bone text-eyebrow uppercase text-stone-600 ${className}`}
     >
-      Image to be supplied
+      <span className="border-y border-stone-300 px-1 py-2">Image to be supplied</span>
     </div>
   );
 }

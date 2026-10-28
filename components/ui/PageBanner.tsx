@@ -1,25 +1,15 @@
-import Image from "next/image"
-export function PageBanner({ title, subtitle }: { title: string; subtitle?: string }) {
+/** Quiet page intro: eyebrow, large serif title, optional standfirst, hairline below. */
+export function PageBanner({ title, subtitle, eyebrow }: { title: string; subtitle?: string; eyebrow?: string }) {
   return (
-    
-    <section className="relative py-14 text-white overflow-hidden">
-  <div 
-    className="absolute inset-0"
-    style={{
-      backgroundImage: "url('/images/background-2.jpeg')",
-      backgroundSize: "cover",
-      backgroundPosition: "center"
-    }}
-  />
-  <div className="absolute inset-0 bg-black/60" />
-  <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-    <h1 className="font-serif text-5xl">{title}</h1>
-    {subtitle && <p className="mt-3 max-w-md text-sm text-white/80">{subtitle}</p>}
-  </div>
-</section>
+    <header className="container-site pb-10 pt-16 md:pb-14 md:pt-24">
+      {eyebrow && <p className="eyebrow mb-5">{eyebrow}</p>}
+      <h1 className="max-w-4xl font-serif text-h1 font-medium text-ink">{title}</h1>
+      {subtitle && <p className="mt-6 max-w-2xl text-body text-stone-600">{subtitle}</p>}
+      <div className="mt-10 h-px w-full bg-stone-200 md:mt-14" aria-hidden="true" />
+    </header>
   );
 }
 
 export function EmptyNote({ children }: { children: React.ReactNode }) {
-  return <p className="rounded border border-dashed border-stone-300 p-8 text-sm text-stone-500">{children}</p>;
+  return <p className="border-y border-stone-200 py-12 text-center text-body text-stone-600">{children}</p>;
 }
