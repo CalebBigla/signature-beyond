@@ -48,6 +48,19 @@ body { @apply bg-paper text-stone-800 antialiased; }
 .hero-zoom { animation: sb-zoom 1.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
 @keyframes sb-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .hero-line { animation: sb-line 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both; }
+/* Loading placeholders: a soft shimmer across warm grey blocks. */
+@keyframes sb-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+.skeleton {
+  background: linear-gradient(90deg, #ebe6de 0%, #f5f2ed 40%, #ebe6de 80%) 0 0 / 200% 100%;
+  animation: sb-shimmer 1.6s ease-in-out infinite;
+}
+/* Thin progress bar at the top while a page loads. */
+@keyframes sb-progress { 0% { transform: translateX(-100%) scaleX(0.3); } 60% { transform: translateX(40%) scaleX(0.6); } 100% { transform: translateX(100%) scaleX(0.3); } }
+.loading-bar { animation: sb-progress 1.2s ease-in-out infinite; transform-origin: left; }
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background: #ebe6de; }
+  .loading-bar { animation: none; transform: none; opacity: 0.6; }
+}
 @media (prefers-reduced-motion: reduce) {
   .hero-rise, .hero-frame { animation-name: sb-fade; animation-duration: 0.6s; }
   .hero-zoom, .hero-line { animation: none; }

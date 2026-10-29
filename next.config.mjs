@@ -4,6 +4,8 @@ const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The bottom-left "Compiling / Rendering" badge only exists in `npm run dev`; hide it.
+  devIndicators: false,
   // Image uploads go through server actions; the default 1 MB limit is too small.
   experimental: { serverActions: { bodySizeLimit: "6mb" } },
   images: {
