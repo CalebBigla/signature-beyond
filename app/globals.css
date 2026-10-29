@@ -55,3 +55,27 @@ body { @apply bg-paper text-stone-800 antialiased; }
 .admin-dark select,
 .admin-dark textarea { background-color: #0c0a09; color: #e7e5e4; border-color: #57534e; }
 .admin-dark .bg-ink { background-color: #e7e5e4; color: #0c0a09; }
+
+/* Admin CMS (components/admin/ui.tsx and friends): warm brand ink, plus dark-mode for the newer classes. */
+.admin-root { --ink: 20 17 15; }
+.admin-dark .bg-white\/95, .admin-dark .bg-stone-50\/95 { background-color: rgb(28 25 23 / 0.95); }
+.admin-dark .hover\:bg-stone-50:hover { background-color: #292524; }
+.admin-dark .hover\:border-stone-300:hover { border-color: #57534e; }
+.admin-dark .hover\:text-stone-800:hover { color: #fafaf9; }
+.admin-dark .text-stone-400 { color: #78716c; }
+.admin-dark .ring-stone-300, .admin-dark .open\:ring-stone-300[open] { --tw-ring-color: #57534e; }
+.admin-dark .bg-emerald-50 { background-color: rgb(6 78 59 / 0.35); }
+.admin-dark .bg-amber-50 { background-color: rgb(120 53 15 / 0.35); }
+.admin-dark .bg-sky-50 { background-color: rgb(12 74 110 / 0.35); }
+.admin-dark .bg-red-50, .admin-dark .hover\:bg-red-50:hover { background-color: rgb(127 29 29 / 0.3); }
+.admin-dark .bg-orange-50 { background-color: rgb(124 45 18 / 0.3); }
+.admin-dark .border-emerald-200 { border-color: rgb(16 185 129 / 0.35); }
+.admin-dark .border-amber-200 { border-color: rgb(245 158 11 / 0.35); }
+.admin-dark .border-sky-200 { border-color: rgb(14 165 233 / 0.35); }
+.admin-dark .border-red-200 { border-color: rgb(239 68 68 / 0.4); }
+.admin-dark .text-emerald-800, .admin-dark .text-emerald-900 { color: #6ee7b7; }
+.admin-dark .text-amber-700, .admin-dark .text-amber-800, .admin-dark .text-amber-900 { color: #fcd34d; }
+.admin-dark .text-sky-900 { color: #7dd3fc; }
+.admin-dark .text-red-800 { color: #fca5a5; }
+/* The homepage preview is the real site hero: keep its dark ink and white text in dark mode. */
+.admin-dark section.on-dark.bg-ink { background-color: rgb(20 17 15); color: #fff; }
