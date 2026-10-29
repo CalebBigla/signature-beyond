@@ -31,6 +31,8 @@ export interface Artwork {
   priceOnRequest: boolean;
   availability: Availability;
   images: ArtworkImage[];
+  /** Optional PDF (e.g. a condition report or essay), opened from "Read more". */
+  pdfUrl?: string | null;
   featured: boolean;
   status: PublishStatus;
   /** true = sample record, not verified business data */
@@ -62,6 +64,8 @@ export interface Exhibition {
   coverImageUrl: string | null;
   artistIds: string[];
   artworkIds: string[];
+  /** Optional PDF (e.g. the exhibition catalogue), opened from "Read more". */
+  pdfUrl?: string | null;
   featured: boolean;
   status: PublishStatus;
   isDemo?: boolean;
@@ -74,6 +78,8 @@ export interface JournalPost {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  /** Optional PDF version of the article, opened from "Read more". */
+  pdfUrl?: string | null;
   author: string | null;
   publishedAt: string | null;
   status: PublishStatus;

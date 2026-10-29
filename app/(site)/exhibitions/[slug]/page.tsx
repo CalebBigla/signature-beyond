@@ -7,6 +7,7 @@ import { PHASE_LABELS, eventPhase } from "@/lib/event-phase";
 import { ArtworkCard } from "@/components/artworks/ArtworkCard";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { SectionHead } from "@/components/ui/Section";
+import { ReadMore } from "@/components/documents/ReadMore";
 import { Reveal } from "@/components/ui/Reveal";
 import type { Artist } from "@/types";
 
@@ -75,6 +76,7 @@ export default async function ExhibitionPage({ params }: Params) {
         <div className="prose-gallery md:col-span-8">
           <h2 className="sr-only">About the exhibition</h2>
           {ex.description?.split(/\n{2,}/).map((p, i) => <p key={i} className={i === 0 ? "font-serif text-[1.375rem] leading-relaxed text-ink" : undefined}>{p}</p>)}
+          {ex.pdfUrl && <div><ReadMore href={`/exhibitions/${ex.slug}/read`} /></div>}
         </div>
       </div>
 

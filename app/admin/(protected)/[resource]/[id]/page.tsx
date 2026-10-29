@@ -47,7 +47,7 @@ export default async function EditRecord({ params }: { params: Promise<{ resourc
   }
 
   const imageUrls: Record<string, string | null> = {};
-  res.fields.filter((f) => f.type === "image").forEach((f) => { imageUrls[f.name] = mediaUrl((values[f.name] as string | null) ?? null); });
+  res.fields.filter((f) => f.type === "image" || f.type === "pdf").forEach((f) => { imageUrls[f.name] = mediaUrl((values[f.name] as string | null) ?? null); });
 
   const images = res.gallery && !isNew
     ? (((await db.from("artwork_images").select("*").eq("artwork_id", id).order("sort_order")).data ?? []) as ImageRow[])

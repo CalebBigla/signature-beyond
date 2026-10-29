@@ -6,6 +6,7 @@ import type { FieldDef, LinkDef, Option, ResourceDef, SideCard } from "@/lib/adm
 import { Icon } from "@/components/ui/Icon";
 import { Card, Field, Notice, StatusBadge, btn, formatWhen, inputClass } from "./ui";
 import { ImageDropzone } from "./ImageDropzone";
+import { PdfField } from "./PdfField";
 import { useUnsavedGuard } from "./useUnsavedGuard";
 
 interface Props {
@@ -19,8 +20,8 @@ interface Props {
 }
 
 const initial: FormState = { ok: false, message: "" };
-const SIDE_TITLES: Record<SideCard, string> = { publish: "Publishing", pricing: "Price & availability", media: "Image", address: "Web address" };
-const SIDE_ORDER: SideCard[] = ["publish", "pricing", "media", "address"];
+const SIDE_TITLES: Record<SideCard, string> = { publish: "Publishing", pricing: "Price & availability", media: "Image", document: "PDF document", address: "Web address" };
+const SIDE_ORDER: SideCard[] = ["publish", "pricing", "media", "document", "address"];
 
 function LinkPicker({ link, options, selected }: { link: LinkDef; options: Option[]; selected: string[] }) {
   const [filter, setFilter] = useState("");
@@ -94,6 +95,7 @@ export function ResourceForm({ resource, id, values, refOptions, linkSelected, i
       );
     }
     if (f.type === "image") return <ImageDropzone name={f.name} currentUrl={imageUrls[f.name]} />;
+    if (f.type === "pdf") return <PdfField name={f.name} folder={resource.key} currentPath={str(f.name) || null} currentUrl={imageUrls[f.name]} help={f.help} />;
     const type = f.type === "date" ? "date" : f.type === "number" ? "number" : "text";
     const value = f.type === "date" ? str(f.name).slice(0, 10) : str(f.name);
     const isTitle = f.name === resource.titleField;
@@ -123,7 +125,7 @@ export function ResourceForm({ resource, id, values, refOptions, linkSelected, i
         <input type="checkbox" name={f.name} defaultChecked={Boolean(values[f.name])} className="mt-0.5 h-4 w-4 rounded border-stone-300" />
         <span>{f.label}{f.help && <span className="block text-xs text-stone-500">{f.help}</span>}</span>
       </label>
-    ) : f.type === "image" ? (
+    ) : f.type === "image" || f.type === "pdf" ? (
       <div key={f.name}>{control(f)}</div>
     ) : (
       <Field key={f.name} id={f.name} label={f.label} help={f.help} required={f.required}>{control(f)}</Field>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getJournalPostBySlug } from "@/lib/services";
 import { formatDate } from "@/lib/format";
+import { ReadMore } from "@/components/documents/ReadMore";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -55,6 +56,7 @@ export default async function JournalPostPage({ params }: Params) {
               <p key={i}>{para}</p>
             )
           )}
+          {post.pdfUrl && <div className="border-t border-stone-200 pt-8"><ReadMore href={`/journal/${post.slug}/read`} /></div>}
         </div>
       </div>
     </article>

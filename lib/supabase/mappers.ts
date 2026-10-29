@@ -17,6 +17,7 @@ export const toArtwork = (r: ArtworkRow): Artwork => ({
   images: (r.images ?? []).map((i) => ({
     id: i.id, url: mediaUrl(i.storage_path) ?? "", alt: i.alt || r.title, isMain: i.is_main, sortOrder: i.sort_order,
   })),
+  pdfUrl: mediaUrl(r.pdf_path ?? null),
   featured: r.featured, status: r.status,
 });
 
@@ -31,12 +32,13 @@ export const toExhibition = (r: ExhibitionRow): Exhibition => ({
   description: r.description, coverImageUrl: mediaUrl(r.cover_image_path),
   artistIds: (r.exhibition_artists ?? []).map((x) => x.artist_id),
   artworkIds: (r.exhibition_artworks ?? []).map((x) => x.artwork_id),
+  pdfUrl: mediaUrl(r.pdf_path ?? null),
   featured: r.featured, status: r.status,
 });
 
 export const toJournalPost = (r: JournalRow): JournalPost => ({
   id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, content: r.content,
-  coverImageUrl: mediaUrl(r.cover_image_path), author: r.author, publishedAt: r.published_at, status: r.status,
+  coverImageUrl: mediaUrl(r.cover_image_path), pdfUrl: mediaUrl(r.pdf_path ?? null), author: r.author, publishedAt: r.published_at, status: r.status,
 });
 
 export const toTestimonial = (r: TestimonialRow): Testimonial => ({

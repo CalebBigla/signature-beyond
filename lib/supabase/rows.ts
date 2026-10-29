@@ -5,7 +5,7 @@ export interface ImageRow { id: string; storage_path: string; alt: string; is_ma
 export interface ArtworkRow {
   id: string; slug: string; title: string; medium: string | null; dimensions: string | null;
   year: number | null; description: string | null; price: number | string | null; currency: string | null;
-  price_on_request: boolean; availability: Availability; featured: boolean; status: PublishStatus;
+  price_on_request: boolean; availability: Availability; featured: boolean; status: PublishStatus; pdf_path?: string | null;
   artist: ArtistRow | null; images: ImageRow[];
 }
 export interface AuctionRow {
@@ -15,12 +15,12 @@ export interface AuctionRow {
 }
 export interface ExhibitionRow {
   id: string; slug: string; title: string; year: number | null; start_date: string | null; end_date: string | null;
-  description: string | null; cover_image_path: string | null; featured: boolean; status: PublishStatus;
+  description: string | null; cover_image_path: string | null; featured: boolean; status: PublishStatus; pdf_path?: string | null;
   exhibition_artworks: { artwork_id: string }[]; exhibition_artists: { artist_id: string }[];
 }
 export interface JournalRow {
   id: string; slug: string; title: string; excerpt: string | null; content: string;
-  cover_image_path: string | null; author: string | null; published_at: string | null; status: PublishStatus;
+  cover_image_path: string | null; author: string | null; published_at: string | null; status: PublishStatus; pdf_path?: string | null;
 }
 export interface TestimonialRow { id: string; quote: string; author: string; role: string | null; status: PublishStatus }
 export interface SettingsRow {

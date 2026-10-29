@@ -13,6 +13,7 @@ import { AvailabilityBadge } from "@/components/artworks/AvailabilityBadge";
 import { PlaceholderImage } from "@/components/ui/PlaceholderImage";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHead } from "@/components/ui/Section";
+import { ReadMore } from "@/components/documents/ReadMore";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -143,6 +144,7 @@ export default async function ArtworkPage({ params }: Params) {
               <ButtonLink href={contactHref(`Private viewing: ${byLine(artwork)}`)} variant="secondary" className="self-start">
                 Request a private viewing
               </ButtonLink>
+              {artwork.pdfUrl && <ReadMore href={`/artworks/${artwork.slug}/read`} className="self-start" />}
               {whatsappUrl && (
                 <p className="text-caption text-stone-600">
                   Prefer email? <Link href={enquiryHref} className="text-ink underline underline-offset-4">Send an enquiry</Link>

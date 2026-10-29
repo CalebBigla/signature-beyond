@@ -63,6 +63,15 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
   const payload: Record<string, unknown> = {};
   for (const f of res.fields) {
     if (f.type === "checkbox") { payload[f.name] = form.get(f.name) === "on"; continue; }
+    if (f.type === "pdf") {
+      if (form.get(`uploading:${f.name}`)) return fail("Please wait for the PDF to finish uploading, then save again.");
+      const path = String(form.get(`pdf:${f.name}`) ?? "").trim();
+      // Only write the column when the PDF changed, so saving keeps working before 007 is installed.
+      if (path === String(form.get(`pdforig:${f.name}`) ?? "")) continue;
+      if (path && !/^pdfs\/[a-z]+\/[0-9a-f-]{36}\.pdf$/.test(path)) return fail("The PDF upload did not complete. Please choose the file again.");
+      payload[f.name] = path || null;
+      continue;
+    }
     if (f.type === "image") {
       const up = await imagePatch(db, form, res.key, [f.name], (k) => k);
       if (up.error) return fail(up.error);
@@ -88,7 +97,9 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
     ? db.from(res.table).update(payload).eq("id", id).select("id").single()
     : db.from(res.table).insert(payload).select("id").single();
   const { data, error } = await query;
-  if (error) return fail(error.code === "23505" ? "That web address (slug) is already used. Please change it." : `Could not save: ${error.message}`);
+  if (error) return fail(error.code === "23505" ? "That web address (slug) is already used. Please change it."
+    : /pdf_path/.test(error.message) ? "The database needs an update for PDFs: run supabase/migrations/007_pdf_documents.sql in the Supabase SQL Editor, then save again."
+    : `Could not save: ${error.message}`);
   const recordId = (data as { id: string }).id;
 
   for (const l of res.links ?? []) {

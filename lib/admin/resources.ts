@@ -1,6 +1,6 @@
 import { FAQ_CATEGORIES } from "@/lib/content/faq";
 
-export type FieldType = "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "image";
+export type FieldType = "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "image" | "pdf";
 export interface Option { value: string; label: string }
 export interface FieldDef {
   name: string; label: string; type: FieldType; required?: boolean; notNull?: boolean;
@@ -10,7 +10,7 @@ export interface FieldDef {
   /** Where the editor shows the field: the main column (default) or a card in the right-hand sidebar. */
   side?: SideCard;
 }
-export type SideCard = "publish" | "pricing" | "media" | "address";
+export type SideCard = "publish" | "pricing" | "media" | "document" | "address";
 export interface LinkDef { table: string; parentCol: string; childCol: string; refTable: string; refLabel: string; label: string }
 export interface ResourceDef {
   key: string; label: string; singular: string; table: string; titleField: string; hasSlug: boolean;
@@ -36,6 +36,7 @@ const STATUS: FieldDef = {
 const SLUG: FieldDef = { name: "slug", label: "Web address (slug)", type: "text", side: "address", help: "Leave empty to create it from the title. Changing it breaks old links." };
 const FEATURED: FieldDef = { name: "featured", label: "Featured on homepage", type: "checkbox", side: "publish" };
 const COVER: FieldDef = { name: "cover_image_path", label: "Cover image", type: "image", side: "media" };
+const PDF = (help: string): FieldDef => ({ name: "pdf_path", label: "PDF document", type: "pdf", side: "document", help });
 
 export const RESOURCES: ResourceDef[] = [
   {
@@ -52,7 +53,8 @@ export const RESOURCES: ResourceDef[] = [
       { name: "price_on_request", label: "Price on request (hides the price)", type: "checkbox", side: "pricing" },
       { name: "availability", label: "Availability", type: "select", required: true, side: "pricing", options: [
         { value: "available", label: "Available" }, { value: "on_request", label: "On request" }, { value: "sold", label: "Sold" }] },
-      FEATURED, { name: "description", label: "Description", type: "textarea", rows: 8 }, STATUS,
+      FEATURED, { name: "description", label: "Description", type: "textarea", rows: 8 },
+      PDF("Optional, e.g. a condition report or an essay about the work. Visitors open it with \"Read more\"."), STATUS,
     ],
   },
   {
@@ -84,7 +86,8 @@ export const RESOURCES: ResourceDef[] = [
       { name: "title", label: "Title", type: "text", required: true }, SLUG, { name: "year", label: "Year", type: "number" },
       { name: "start_date", label: "Start date", type: "date" }, { name: "end_date", label: "End date", type: "date" },
       COVER, FEATURED,
-      { name: "description", label: "Curatorial statement", type: "textarea", rows: 8 }, STATUS,
+      { name: "description", label: "Curatorial statement", type: "textarea", rows: 8 },
+      PDF("Optional, e.g. the exhibition catalogue. Visitors open it with \"Read more\"."), STATUS,
     ],
   },
   {
@@ -95,7 +98,8 @@ export const RESOURCES: ResourceDef[] = [
       { name: "title", label: "Title", type: "text", required: true }, SLUG,
       { name: "excerpt", label: "Short summary", type: "textarea", rows: 3 }, { name: "author", label: "Author", type: "text" },
       { name: "published_at", label: "Publication date", type: "date", side: "publish" }, COVER,
-      { name: "content", label: "Article text", type: "textarea", rows: 18, notNull: true, help: "Separate paragraphs with a blank line. Start a paragraph with \"> \" for a pull quote." }, STATUS,
+      { name: "content", label: "Article text", type: "textarea", rows: 18, notNull: true, help: "Separate paragraphs with a blank line. Start a paragraph with \"> \" for a pull quote." },
+      PDF("Optional, e.g. the full article or a printable version. Visitors open it with \"Read more\"."), STATUS,
     ],
   },
   {
