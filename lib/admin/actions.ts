@@ -332,6 +332,19 @@ export async function requestPasswordReset(_prev: FormState, form: FormData): Pr
   return { ok: true, message: "If that email belongs to an account, a reset link has been sent. Check your inbox and spam folder." };
 }
 
+/** The reset email also contains a one-time code; entering it signs the person in to choose a new password. */
+export async function verifyResetCode(_prev: FormState, form: FormData): Promise<FormState> {
+  if (isDemoMode) return fail("Demo mode: connect Supabase to enable password reset.");
+  const email = String(form.get("email") ?? "").trim();
+  const token = String(form.get("code") ?? "").replace(/\s/g, "");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Please enter the email the code was sent to.");
+  if (!/^\d{6,10}$/.test(token)) return fail("The code is the number in the email (usually 6 digits).");
+  const db = await createClient();
+  const { error } = await db.auth.verifyOtp({ email, token, type: "recovery" });
+  if (error) return fail("That code is wrong or has expired. Request a new email and use the newest code.");
+  redirect("/admin/reset-password");
+}
+
 export async function updatePassword(_prev: { error: string }, form: FormData): Promise<{ error: string }> {
   const password = String(form.get("password") ?? "");
   if (password.length < 8) return { error: "Password must be at least 8 characters." };

@@ -11,7 +11,15 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
   const { error } = await searchParams;
   return (
     <AuthLayout title="Forgot password?" description="Enter your account email and we will send you a link to choose a new password.">
-      <ForgotPasswordForm notice={error === "expired" ? "That reset link is invalid or has expired. Please request a new one." : undefined} />
+      <ForgotPasswordForm
+        notice={
+          error === "other-browser"
+            ? "That link was opened in a different browser or device from the one that asked for it. Choose \"I already have a code\" and type the code from the email instead, or request a new email from this browser."
+            : error === "expired"
+              ? "That reset link is invalid or has expired. Please request a new one."
+              : undefined
+        }
+      />
     </AuthLayout>
   );
 }
