@@ -11,6 +11,7 @@ Button names in Supabase can change slightly. If one looks different, look for t
 2. Open `supabase/migrations/001_schema.sql` from this project, copy everything, paste it in, click **Run**.
 3. You should see "Success". This creates the tables, the security rules and the image storage.
 4. Click **New query** again, paste everything from `supabase/migrations/003_cms_upgrade.sql`, click **Run**. This adds the FAQ and legal-page tables, the logo and split homepage hero fields, and "last updated" dates. It is safe to run again.
+5. Then, the same way: `005_hero_layout.sql` (hero image side and background) and `006_login_rate_limit.sql` (admin sign-in is paused for 15 minutes after 5 failed attempts). `004_seed_starter_content.sql` is optional starter content.
 
 ## 3. Connect the website
 1. In Supabase open **Project Settings > API** (or "API Keys").

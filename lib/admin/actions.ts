@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 import { SITE_URL } from "@/lib/site";
 import { isDemoMode } from "@/lib/services";
 import { LEGAL_DEFAULTS, isLegalKey } from "@/lib/content/legal";
+import { MAX_ATTEMPTS, loginKey, minutesText, rateStatus, recordFailure, resetAttempts } from "@/lib/admin/rate-limit";
 
 export interface FormState { ok: boolean; message: string }
 const fail = (message: string): FormState => ({ ok: false, message });
@@ -309,14 +310,30 @@ export async function login(_prev: { error: string }, form: FormData): Promise<{
   if (isDemoMode) return { error: "Demo mode: connect Supabase to enable login." };
   const db = await createClient();
   const email = String(form.get("email") ?? "").trim();
+  if (!email) return { error: "Please enter your email." };
+
+  // Rate limit: 5 failed attempts per email + IP, then a 15-minute pause.
+  const key = await loginKey(email);
+  const before = await rateStatus(db, key);
+  if (before.failures >= MAX_ATTEMPTS) {
+    return { error: `Too many failed attempts. For security, sign-in is paused. Try again in ${minutesText(before.retryAfterSeconds)}, or reset your password.` };
+  }
+
   const { error } = await db.auth.signInWithPassword({ email, password: String(form.get("password") ?? "") });
   if (error) {
     // Name the cases an admin can fix; everything else stays generic so accounts cannot be probed.
     if (error.code === "email_not_confirmed") return { error: "This account's email is not confirmed yet. Run supabase/migrations/002_make_first_admin.sql (it confirms the account), or confirm the user in Supabase > Authentication > Users." };
     if (error.status === 429) return { error: "Too many attempts. Please wait a minute and try again." };
     if (error.code !== "invalid_credentials") return { error: `Sign-in failed: ${error.message}` };
-    return { error: "Wrong email or password." };
+    await recordFailure(db, key);
+    const left = MAX_ATTEMPTS - (before.failures + 1);
+    return {
+      error: left > 0
+        ? `Wrong email or password. ${left} attempt${left === 1 ? "" : "s"} left before sign-in is paused for 15 minutes.`
+        : "Wrong email or password. Sign-in is now paused for 15 minutes. You can reset your password meanwhile.",
+    };
   }
+  await resetAttempts(db, key);
   redirect("/admin");
 }
 
