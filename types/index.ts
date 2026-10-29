@@ -110,8 +110,19 @@ export interface WebsiteSettings {
   phoneNumbers: string[];
   address: string;
   virtualTourUrl: string;
-  /** Homepage hero photo from Storage. Empty = use the default image in /public/images/hero.jpg */
+  /** Homepage hero, left half (carries the text). Empty = use the default image in /public/images/hero.jpg */
   heroImageUrl: string;
+  /** Homepage hero, right half (plain image, no text). Empty = the left image spans the full width. */
+  heroImageRightUrl: string;
+  heroImageAlt: string;
+  heroImageRightAlt: string;
+  /** Small label above the heading. Empty = "Est. {establishedYear}" when the year is set. */
+  heroEyebrow: string;
+  heroPrimaryLabel: string;
+  heroPrimaryHref: string;
+  /** Empty label = automatic "Upcoming auction" link when one exists. */
+  heroSecondaryLabel: string;
+  heroSecondaryHref: string;
   /** Logo from Storage. Empty = use the default logo in /public/images/logo.png */
   logoUrl: string;
   /** Photos for the four homepage tiles. Empty = a placeholder box is shown. */

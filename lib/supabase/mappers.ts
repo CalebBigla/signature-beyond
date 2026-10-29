@@ -49,6 +49,10 @@ export const toSettings = (r: SettingsRow): WebsiteSettings => ({
   whatsappDefaultMessage: r.whatsapp_default_message, whatsappArtworkTemplate: r.whatsapp_artwork_template,
   primaryEmail: r.primary_email, additionalEmails: r.additional_emails, phoneNumbers: r.phone_numbers,
   address: r.address, virtualTourUrl: r.virtual_tour_url, heroImageUrl: mediaUrl(r.hero_image_path) ?? "", logoUrl: mediaUrl(r.logo_path) ?? "",
+  // The ?? fallbacks keep the site working on a database that has not run 003_cms_upgrade.sql yet.
+  heroImageRightUrl: mediaUrl(r.hero_image_right_path ?? null) ?? "", heroImageAlt: r.hero_image_alt ?? "", heroImageRightAlt: r.hero_image_right_alt ?? "",
+  heroEyebrow: r.hero_eyebrow ?? "", heroPrimaryLabel: r.hero_primary_label ?? "View the collection", heroPrimaryHref: r.hero_primary_href ?? "/artworks",
+  heroSecondaryLabel: r.hero_secondary_label ?? "", heroSecondaryHref: r.hero_secondary_href ?? "",
   tileImages: {
     auctions: mediaUrl(r.tile_auctions_path) ?? "", exhibitions: mediaUrl(r.tile_exhibitions_path) ?? "",
     artworks: mediaUrl(r.tile_artworks_path) ?? "", tour: mediaUrl(r.tile_tour_path) ?? "",

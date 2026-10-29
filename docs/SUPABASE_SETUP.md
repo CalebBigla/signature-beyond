@@ -10,6 +10,7 @@ Button names in Supabase can change slightly. If one looks different, look for t
 1. In your project, open **SQL Editor**, then **New query**.
 2. Open `supabase/migrations/001_schema.sql` from this project, copy everything, paste it in, click **Run**.
 3. You should see "Success". This creates the tables, the security rules and the image storage.
+4. Click **New query** again, paste everything from `supabase/migrations/003_cms_upgrade.sql`, click **Run**. This adds the FAQ and legal-page tables, the logo and split homepage hero fields, and "last updated" dates. It is safe to run again.
 
 ## 3. Connect the website
 1. In Supabase open **Project Settings > API** (or "API Keys").
@@ -24,7 +25,8 @@ Never copy the `service_role` or "secret" key into this project. It is not neede
 
 ## 4. Create the first administrator
 1. In Supabase open **Authentication > Users > Add user**. Enter your email and a password.
-2. Open `supabase/migrations/002_make_first_admin.sql`, replace `PUT-YOUR-EMAIL-HERE` with that email, paste it in the SQL Editor, click **Run**.
+2. Open `supabase/migrations/002_make_first_admin.sql`, replace the email address in it with that email, paste it in the SQL Editor, click **Run**.
+3. Restart `npm run dev`, open `/admin`, and sign in. You land on the dashboard.
 
 ## 5. Check it works
 With the site running in `supabase` mode, the pages show "no content yet" messages. That is correct: the database is empty. The admin area (next stage) is where you add content.

@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { DemoNotice } from "@/components/admin/DemoNotice";
 import { requireAdmin } from "@/lib/admin/auth";
-import { isDemoMode } from "@/lib/services";
 
 export const metadata: Metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 interface EnquiryRow { id: string; name: string; subject: string | null; message: string; created_at: string; handled: boolean }
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  if (isDemoMode) return <DemoNotice />;
-  const { db } = await requireAdmin();
+  const { db } = await requireAdmin(); // redirects to /admin/login when signed out or in demo mode
 
   // Theme and sidebar state live in cookies, so the server renders the right look straight away (no flash).
   const jar = await cookies();
