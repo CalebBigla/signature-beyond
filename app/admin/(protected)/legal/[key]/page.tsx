@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { LEGAL_DEFAULTS, isLegalKey } from "@/lib/content/legal";
 import { LegalPageForm } from "@/components/admin/LegalPageForm";
+import { PageHeader } from "@/components/admin/ui";
 
 export default async function EditLegalPage({ params }: { params: Promise<{ key: string }> }) {
   const { key } = await params;
@@ -18,8 +18,7 @@ export default async function EditLegalPage({ params }: { params: Promise<{ key:
 
   return (
     <>
-      <Link href="/admin/legal" className="text-xs underline">← Legal pages</Link>
-      <h1 className="mb-6 mt-3 font-serif text-3xl">Edit: {row?.title ?? d.title}</h1>
+      <PageHeader title={row?.title ?? d.title} crumbs={[{ label: "Dashboard", href: "/admin" }, { label: "Legal pages", href: "/admin/legal" }, { label: "Edit" }]} />
       <LegalPageForm
         pageKey={key}
         title={row?.title ?? d.title}

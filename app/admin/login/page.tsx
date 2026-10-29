@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LoginForm } from "@/components/admin/LoginForm";
 import { DemoNotice } from "@/components/admin/DemoNotice";
+import { AuthLayout } from "@/components/admin/AuthLayout";
 import { isDemoMode } from "@/lib/services";
 
 export const metadata: Metadata = { title: "Admin login", robots: { index: false, follow: false } };
@@ -13,9 +14,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     : error === "profile-error" ? `Could not check admin access: ${detail ?? "unknown error"}`
     : undefined;
   return (
-    <div className="mx-auto max-w-sm px-4 py-24">
-      <h1 className="mb-6 font-serif text-3xl">Admin login</h1>
+    <AuthLayout title="Sign in" description="Sign in to manage the Signature Beyond website.">
       <LoginForm notice={notice} success={reset === "1" ? "Your password was updated. Please sign in with the new password." : undefined} />
-    </div>
+    </AuthLayout>
   );
 }

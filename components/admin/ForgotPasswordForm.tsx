@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { requestPasswordReset, type FormState } from "@/lib/admin/actions";
+import { btn, inputClass } from "./ui";
 
 const initial: FormState = { ok: false, message: "" };
 
@@ -10,10 +11,10 @@ export function ForgotPasswordForm({ notice }: { notice?: string }) {
   return (
     <form action={action} className="space-y-4">
       <div>
-        <label htmlFor="email" className="mb-1 block text-xs text-stone-600">Your account email</label>
-        <input id="email" name="email" type="email" required autoComplete="email" className="w-full rounded border border-stone-300 bg-white px-3 py-2 text-sm" />
+        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-stone-700">Your account email</label>
+        <input id="email" name="email" type="email" required autoComplete="email" className={inputClass} />
       </div>
-      <button type="submit" disabled={pending} className="w-full rounded bg-ink px-5 py-2 text-sm text-white disabled:opacity-60">
+      <button type="submit" disabled={pending} className={`${btn("primary")} w-full`}>
         {pending ? "Sending..." : "Send reset link"}
       </button>
       {(state.message || notice) && (
