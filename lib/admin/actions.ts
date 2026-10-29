@@ -20,6 +20,13 @@ const MAX_BYTES = 5 * 1024 * 1024;
 
 type Db = Awaited<ReturnType<typeof createClient>>;
 
+/** Where to go after an action: the page it came from (admin only), with a notice for the toast. */
+function back(form: FormData, fallback: string, notice: string): string {
+  const raw = String(form.get("_return") ?? "");
+  const base = /^\/admin(\/|\?|$)/.test(raw) && !raw.startsWith("//") ? raw : fallback;
+  return `${base}${base.includes("?") ? "&" : "?"}notice=${notice}`;
+}
+
 async function uploadImage(db: Db, folder: string, file: File): Promise<{ path?: string; error?: string }> {
   const ext = TYPES[file.type];
   if (!ext) return { error: `"${file.name}" is not a JPEG, PNG or WebP image.` };
@@ -28,6 +35,22 @@ async function uploadImage(db: Db, folder: string, file: File): Promise<{ path?:
   const { error } = await db.storage.from("media").upload(path, file, { contentType: file.type });
   return error ? { error: `Upload failed: ${error.message}` } : { path };
 }
+
+/** Uploads file:<key> if one was chosen, or clears the column when remove:<key> is ticked. Returns the patch. */
+async function imagePatch(db: Db, form: FormData, folder: string, keys: string[], column = (k: string) => `${k}_path`) {
+  const patch: Record<string, string | null> = {};
+  for (const key of keys) {
+    const file = form.get(`file:${key}`);
+    if (file instanceof File && file.size > 0) {
+      const up = await uploadImage(db, folder, file);
+      if (up.error) return { error: up.error };
+      patch[column(key)] = up.path ?? null;
+    } else if (form.get(`remove:${key}`) === "on") patch[column(key)] = null;
+  }
+  return { patch };
+}
+
+// Content records ------------------------------------------------------------
 
 export async function saveRecord(_prev: FormState, form: FormData): Promise<FormState> {
   if (isDemoMode) return fail("Demo mode: nothing can be saved. Connect Supabase first.");
@@ -40,12 +63,9 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
   for (const f of res.fields) {
     if (f.type === "checkbox") { payload[f.name] = form.get(f.name) === "on"; continue; }
     if (f.type === "image") {
-      const file = form.get(`file:${f.name}`);
-      if (file instanceof File && file.size > 0) {
-        const up = await uploadImage(db, res.key, file);
-        if (up.error) return fail(up.error);
-        payload[f.name] = up.path;
-      } else if (form.get(`remove:${f.name}`) === "on") payload[f.name] = null;
+      const up = await imagePatch(db, form, res.key, [f.name], (k) => k);
+      if (up.error) return fail(up.error);
+      Object.assign(payload, up.patch);
       continue;
     }
     const raw = String(form.get(f.name) ?? "").trim();
@@ -83,22 +103,23 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
   if (res.gallery) {
     const files = form.getAll("gallery").filter((f): f is File => f instanceof File && f.size > 0);
     if (files.length) {
-      const { count } = await db.from("artwork_images").select("id", { count: "exact", head: true }).eq("artwork_id", recordId);
-      let order = count ?? 0;
+      const { data: existing } = await db.from("artwork_images").select("sort_order").eq("artwork_id", recordId).order("sort_order", { ascending: false }).limit(1);
+      const hasImages = (existing ?? []).length > 0;
+      let order = hasImages ? Number((existing as { sort_order: number }[])[0].sort_order) + 1 : 0;
       for (const file of files) {
         const up = await uploadImage(db, "artworks", file);
-        if (up.error) return fail(`Artwork saved, but ${up.error}`);
+        if (up.error) return fail(`Saved, but ${up.error}`);
         const { error: e } = await db.from("artwork_images").insert({
-          artwork_id: recordId, storage_path: up.path, alt: String(payload.title ?? ""), is_main: order === 0, sort_order: order,
+          artwork_id: recordId, storage_path: up.path, alt: String(payload.title ?? ""), is_main: !hasImages && order === 0, sort_order: order,
         });
-        if (e) return fail(`Artwork saved, but image record failed: ${e.message}`);
+        if (e) return fail(`Saved, but the image record failed: ${e.message}`);
         order += 1;
       }
     }
   }
 
   refresh();
-  redirect(`/admin/${res.key}`);
+  redirect(`/admin/${res.key}/${recordId}?notice=${id ? "saved" : "created"}`);
 }
 
 export async function deleteRecord(form: FormData): Promise<void> {
@@ -108,7 +129,7 @@ export async function deleteRecord(form: FormData): Promise<void> {
   const { error } = await db.from(res.table).delete().eq("id", String(form.get("_id")));
   if (error) throw new Error(`Could not delete: ${error.message}`);
   refresh();
-  redirect(`/admin/${res.key}`);
+  redirect(`/admin/${res.key}?notice=deleted`);
 }
 
 export async function setStatus(form: FormData): Promise<void> {
@@ -119,18 +140,45 @@ export async function setStatus(form: FormData): Promise<void> {
   const { error } = await db.from(res.table).update({ status }).eq("id", String(form.get("_id")));
   if (error) throw new Error(`Could not change status: ${error.message}`);
   refresh();
-  redirect(`/admin/${res.key}`);
+  redirect(back(form, `/admin/${res.key}`, status === "published" ? "published" : "unpublished"));
 }
+
+/** Publish, unpublish or delete several records at once (list page checkboxes). */
+export async function bulkAction(form: FormData): Promise<void> {
+  const { db } = await requireAdmin();
+  const res = getResource(String(form.get("_resource")));
+  if (!res) throw new Error("Unknown content type.");
+  const ids = form.getAll("ids").map(String).filter(Boolean);
+  const op = String(form.get("_op"));
+  if (ids.length === 0) redirect(back(form, `/admin/${res.key}`, "bulk"));
+  if (op === "delete") {
+    const { error } = await db.from(res.table).delete().in("id", ids);
+    if (error) throw new Error(`Could not delete: ${error.message}`);
+  } else if ((op === "published" || op === "draft") && res.hasStatus) {
+    const { error } = await db.from(res.table).update({ status: op }).in("id", ids);
+    if (error) throw new Error(`Could not update: ${error.message}`);
+  } else throw new Error("Unknown action.");
+  refresh();
+  redirect(back(form, `/admin/${res.key}`, "bulk"));
+}
+
+// Artwork images -------------------------------------------------------------
 
 export async function deleteArtworkImage(form: FormData): Promise<void> {
   const { db } = await requireAdmin();
   const imageId = String(form.get("_image"));
-  const { data } = await db.from("artwork_images").select("storage_path").eq("id", imageId).maybeSingle();
+  const artworkId = String(form.get("_artwork"));
+  const { data } = await db.from("artwork_images").select("storage_path, is_main").eq("id", imageId).maybeSingle();
   const { error } = await db.from("artwork_images").delete().eq("id", imageId);
   if (error) throw new Error(`Could not delete image: ${error.message}`);
   if (data?.storage_path) await db.storage.from("media").remove([data.storage_path as string]);
+  // Keep a main image: promote the first remaining one if the main image was deleted.
+  if (data?.is_main) {
+    const { data: next } = await db.from("artwork_images").select("id").eq("artwork_id", artworkId).order("sort_order").limit(1);
+    if (next?.[0]) await db.from("artwork_images").update({ is_main: true }).eq("id", (next[0] as { id: string }).id);
+  }
   refresh();
-  redirect(`/admin/artworks/${String(form.get("_artwork"))}`);
+  redirect(`/admin/artworks/${artworkId}?notice=image-deleted#images`);
 }
 
 export async function setMainImage(form: FormData): Promise<void> {
@@ -140,12 +188,44 @@ export async function setMainImage(form: FormData): Promise<void> {
   const b = await db.from("artwork_images").update({ is_main: true }).eq("id", String(form.get("_image")));
   if (a.error || b.error) throw new Error("Could not set the main image.");
   refresh();
-  redirect(`/admin/artworks/${artworkId}`);
+  redirect(`/admin/artworks/${artworkId}?notice=image-updated#images`);
 }
+
+export async function updateImageAlt(form: FormData): Promise<void> {
+  const { db } = await requireAdmin();
+  const artworkId = String(form.get("_artwork"));
+  const alt = String(form.get("alt") ?? "").trim().slice(0, 300);
+  const { error } = await db.from("artwork_images").update({ alt }).eq("id", String(form.get("_image")));
+  if (error) throw new Error(`Could not save the description: ${error.message}`);
+  refresh();
+  redirect(`/admin/artworks/${artworkId}?notice=image-updated#images`);
+}
+
+/** Moves an image one place earlier or later by swapping sort_order with its neighbour. */
+export async function moveImage(form: FormData): Promise<void> {
+  const { db } = await requireAdmin();
+  const artworkId = String(form.get("_artwork"));
+  const imageId = String(form.get("_image"));
+  const dir = form.get("_dir") === "up" ? -1 : 1;
+  const { data } = await db.from("artwork_images").select("id, sort_order").eq("artwork_id", artworkId).order("sort_order");
+  const list = ((data ?? []) as { id: string; sort_order: number }[]).map((r, i) => ({ ...r, sort_order: i }));
+  const i = list.findIndex((r) => r.id === imageId);
+  const j = i + dir;
+  if (i >= 0 && j >= 0 && j < list.length) {
+    [list[i], list[j]] = [list[j], list[i]];
+    for (const [k, r] of list.entries()) await db.from("artwork_images").update({ sort_order: k }).eq("id", r.id);
+    refresh();
+  }
+  redirect(`/admin/artworks/${artworkId}?notice=image-updated#images`);
+}
+
+// Settings and homepage -------------------------------------------------------
 
 const URL_FIELDS = ["instagram", "facebook", "youtube", "tiktok", "linkedin"] as const;
 const lines = (v: FormDataEntryValue | null) => String(v ?? "").split("\n").map((s) => s.trim()).filter(Boolean);
+const isSiteOrHttps = (v: string) => /^(\/(?!\/)|https:\/\/)/.test(v);
 
+/** Website settings: name, about text, logo, contact, WhatsApp and social links. The homepage has its own form. */
 export async function saveSettings(_prev: FormState, form: FormData): Promise<FormState> {
   if (isDemoMode) return fail("Demo mode: nothing can be saved. Connect Supabase first.");
   const { db } = await requireAdmin();
@@ -161,34 +241,63 @@ export async function saveSettings(_prev: FormState, form: FormData): Promise<Fo
     if (v && !/^https?:\/\//.test(v)) return fail(`${k} link must start with https://`);
     social[k] = v;
   }
-  const virtual = text("virtual_tour_url");
-  if (virtual && !/^https?:\/\//.test(virtual)) return fail("Virtual tour link must start with https://");
   const year = text("established_year");
   if (year && !/^\d{4}$/.test(year)) return fail("Established year must be 4 digits.");
   const templ = text("whatsapp_artwork_template");
   if (!templ.includes("{title}")) return fail("The artwork message must contain {title}.");
 
-  const imagePatch: Record<string, string | null> = {};
-  for (const key of ["logo", "hero_image", "tile_auctions", "tile_exhibitions", "tile_artworks", "tile_tour"]) {
-    const file = form.get(`file:${key}`);
-    if (file instanceof File && file.size > 0) {
-      const up = await uploadImage(db, "site", file);
-      if (up.error) return fail(up.error);
-      imagePatch[`${key}_path`] = up.path ?? null;
-    } else if (form.get(`remove:${key}`) === "on") imagePatch[`${key}_path`] = null;
-  }
+  const images = await imagePatch(db, form, "site", ["logo"]);
+  if (images.error) return fail(images.error);
 
   const { error } = await db.from("website_settings").update({
-    site_name: text("site_name") || "Signature Beyond", established_year: year ? Number(year) : null,
-    home_heading: text("home_heading"), home_intro: text("home_intro"), about_summary: text("about_summary"),
+    site_name: text("site_name") || "Signature Beyond", established_year: year ? Number(year) : null, about_summary: text("about_summary"),
     whatsapp_number: whatsapp, whatsapp_default_message: text("whatsapp_default_message"), whatsapp_artwork_template: templ,
     primary_email: text("primary_email"), additional_emails: lines(form.get("additional_emails")),
-    phone_numbers: lines(form.get("phone_numbers")), address: text("address"), virtual_tour_url: virtual, social, ...imagePatch,
+    phone_numbers: lines(form.get("phone_numbers")), address: text("address"), social, ...images.patch,
   }).eq("id", 1);
   if (error) return fail(`Could not save settings: ${error.message}`);
   refresh();
-  return { ok: true, message: "Settings saved." };
+  return { ok: true, message: "Settings saved. The website is updated." };
 }
+
+/** Homepage: split hero (text, two images, buttons), section fallback images and the virtual tour link. */
+export async function saveHomepage(_prev: FormState, form: FormData): Promise<FormState> {
+  if (isDemoMode) return fail("Demo mode: nothing can be saved. Connect Supabase first.");
+  const { db } = await requireAdmin();
+  const text = (k: string, max = 300) => String(form.get(k) ?? "").trim().slice(0, max);
+
+  const heading = text("home_heading", 160);
+  if (!heading) return fail("The hero heading is required.");
+  const links = [["hero_primary", "Main button"], ["hero_secondary", "Second button"]] as const;
+  for (const [k, label] of links) {
+    const l = text(`${k}_label`, 60);
+    const h = text(`${k}_href`);
+    if (l && !h) return fail(`${label}: add a link, or clear the button text.`);
+    if (h && !isSiteOrHttps(h)) return fail(`${label}: the link must start with / (a page on this site) or https://`);
+  }
+  const tour = text("virtual_tour_url");
+  if (tour && !/^https:\/\//.test(tour)) return fail("Virtual tour link must start with https://");
+
+  const images = await imagePatch(db, form, "site", ["hero_image", "hero_image_right", "tile_auctions", "tile_exhibitions", "tile_tour"]);
+  if (images.error) return fail(images.error);
+
+  const { error } = await db.from("website_settings").update({
+    hero_eyebrow: text("hero_eyebrow", 60), home_heading: heading, home_intro: text("home_intro", 400),
+    hero_image_alt: text("hero_image_alt"), hero_image_right_alt: text("hero_image_right_alt"),
+    hero_primary_label: text("hero_primary_label", 60), hero_primary_href: text("hero_primary_href"),
+    hero_secondary_label: text("hero_secondary_label", 60), hero_secondary_href: text("hero_secondary_href"),
+    virtual_tour_url: tour, ...images.patch,
+  }).eq("id", 1);
+  if (error) {
+    return fail(/column .* does not exist/i.test(error.message)
+      ? "The database needs the CMS upgrade: run supabase/migrations/003_cms_upgrade.sql in the Supabase SQL Editor, then save again."
+      : `Could not save the homepage: ${error.message}`);
+  }
+  refresh();
+  return { ok: true, message: "Homepage saved. The live homepage is updated." };
+}
+
+// Authentication --------------------------------------------------------------
 
 export async function login(_prev: { error: string }, form: FormData): Promise<{ error: string }> {
   if (isDemoMode) return { error: "Demo mode: connect Supabase to enable login." };
@@ -229,6 +338,8 @@ export async function updatePassword(_prev: { error: string }, form: FormData): 
   redirect("/admin/login?reset=1");
 }
 
+// Enquiries ---------------------------------------------------------------------
+
 export async function markEnquiryRead(id: string): Promise<void> {
   const { db } = await requireAdmin();
   const { error } = await db.from("enquiries").update({ handled: true }).eq("id", id);
@@ -242,6 +353,25 @@ export async function markAllEnquiriesRead(): Promise<void> {
   if (error) throw new Error(`Could not update notifications: ${error.message}`);
   revalidatePath("/admin", "layout");
 }
+
+export async function setEnquiryHandled(form: FormData): Promise<void> {
+  const { db } = await requireAdmin();
+  const handled = form.get("_handled") === "true";
+  const { error } = await db.from("enquiries").update({ handled }).eq("id", String(form.get("_id")));
+  if (error) throw new Error(`Could not update the enquiry: ${error.message}`);
+  revalidatePath("/admin", "layout");
+  redirect(back(form, "/admin/enquiries", "saved"));
+}
+
+export async function deleteEnquiry(form: FormData): Promise<void> {
+  const { db } = await requireAdmin();
+  const { error } = await db.from("enquiries").delete().eq("id", String(form.get("_id")));
+  if (error) throw new Error(`Could not delete the enquiry: ${error.message}`);
+  revalidatePath("/admin", "layout");
+  redirect(back(form, "/admin/enquiries", "deleted"));
+}
+
+// Legal pages -------------------------------------------------------------------
 
 export async function saveLegalPage(_prev: FormState, form: FormData): Promise<FormState> {
   if (isDemoMode) return fail("Demo mode: nothing can be saved. Connect Supabase first.");
@@ -275,5 +405,5 @@ export async function restoreLegalPage(form: FormData): Promise<void> {
   const { error } = await db.from("legal_pages").delete().eq("page_key", key);
   if (error) throw new Error(`Could not restore: ${error.message}`);
   refresh();
-  redirect(`/admin/legal/${key}`);
+  redirect(`/admin/legal/${key}?notice=saved`);
 }

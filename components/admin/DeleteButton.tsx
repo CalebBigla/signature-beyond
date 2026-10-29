@@ -1,11 +1,16 @@
 "use client";
+import type { ComponentProps } from "react";
 
-export function DeleteButton({ action, resource, id, what }: { action: (f: FormData) => Promise<void>; resource: string; id: string; what: string }) {
+/** A submit button that asks for confirmation first. Use inside a <form> (or with the form attribute). */
+export function ConfirmButton({ message, onClick, ...rest }: ComponentProps<"button"> & { message: string }) {
   return (
-    <form action={action} onSubmit={(e) => { if (!window.confirm(`Delete "${what}"? This cannot be undone.`)) e.preventDefault(); }}>
-      <input type="hidden" name="_resource" value={resource} />
-      <input type="hidden" name="_id" value={id} />
-      <button type="submit" className="text-xs text-red-700 underline">Delete</button>
-    </form>
+    <button
+      type="submit"
+      {...rest}
+      onClick={(e) => {
+        if (!window.confirm(message)) e.preventDefault();
+        else onClick?.(e);
+      }}
+    />
   );
 }
