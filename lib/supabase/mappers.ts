@@ -58,7 +58,7 @@ export const toSettings = (r: SettingsRow): WebsiteSettings => ({
     artworks: mediaUrl(r.tile_artworks_path) ?? "", tour: mediaUrl(r.tile_tour_path) ?? "",
   },
   social: {
-    instagram: r.social.instagram ?? "", facebook: r.social.facebook ?? "", youtube: r.social.youtube ?? "",
+    instagram: r.social.instagram ?? "", facebook: r.social.facebook ?? "", twitter: r.social.twitter ?? "", youtube: r.social.youtube ?? "",
     tiktok: r.social.tiktok ?? "", linkedin: r.social.linkedin ?? "",
   },
 });

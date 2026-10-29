@@ -9,6 +9,7 @@ import { useUnsavedGuard } from "./useUnsavedGuard";
 
 const initial: FormState = { ok: false, message: "" };
 const DEFAULT_LEFT = "/images/hero.jpg";
+const DEFAULT_RIGHT = "/images/background-1.jpeg";
 
 export function HomepageForm({ s }: { s: WebsiteSettings }) {
   const [state, action, pending] = useActionState(saveHomepage, initial);
@@ -50,7 +51,7 @@ export function HomepageForm({ s }: { s: WebsiteSettings }) {
   });
 
   const leftSrc = leftPreview ?? (leftRemoved ? DEFAULT_LEFT : s.heroImageUrl || DEFAULT_LEFT);
-  const rightSrc = rightPreview ?? (rightRemoved ? null : s.heroImageRightUrl || null);
+  const rightSrc = rightPreview ?? (rightRemoved ? DEFAULT_RIGHT : s.heroImageRightUrl || DEFAULT_RIGHT);
 
   return (
     <form ref={formRef} action={action} onInput={() => setDirty(true)} onChange={() => setDirty(true)} className="space-y-6">
@@ -72,7 +73,7 @@ export function HomepageForm({ s }: { s: WebsiteSettings }) {
             heading={t.heading || "Your heading"}
             intro={t.intro}
             left={{ src: leftSrc, alt: "" }}
-            right={rightSrc ? { src: rightSrc, alt: "" } : null}
+            right={{ src: rightSrc, alt: "" }}
             primary={t.primaryLabel ? { label: t.primaryLabel, href: "#" } : null}
             secondary={t.secondaryLabel ? { label: t.secondaryLabel, href: "#" } : { label: "Upcoming auction (automatic)", href: "#" }}
           />
@@ -96,12 +97,12 @@ export function HomepageForm({ s }: { s: WebsiteSettings }) {
           </div>
         </Card>
 
-        <Card title="Right image" description="Plain image, no text. Leave empty and the left image fills the whole width.">
+        <Card title="Right image" description="Plain image, no text on it.">
           <div className="space-y-4">
             <ImageDropzone
               name="hero_image_right"
               currentUrl={s.heroImageRightUrl || null}
-              emptyHint="Optional."
+              emptyHint="Until you upload one, the default gallery interior photo is used."
               aspect="aspect-[4/5]"
               onPreview={setRightPreview}
               onRemove={setRightRemoved}

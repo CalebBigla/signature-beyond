@@ -102,7 +102,15 @@ export const demoSettings: WebsiteSettings = {
   heroSecondaryHref: "",
   logoUrl: "",
   tileImages: { auctions: "", exhibitions: "", artworks: "", tour: "" },
-  social: { instagram: "", facebook: "", youtube: "", tiktok: "", linkedin: "" },
+  // From the gallery's current live site (signatureandsogal / SignatureSogal). Add the YouTube channel link in Admin > Website settings.
+  social: {
+    instagram: "https://www.instagram.com/signatureandsogal",
+    facebook: "https://www.facebook.com/signatureandsogal",
+    twitter: "https://twitter.com/SignatureSogal",
+    youtube: "",
+    tiktok: "",
+    linkedin: "",
+  },
 };
 
 // No approved journal posts or testimonials exist yet, so these stay empty on purpose.

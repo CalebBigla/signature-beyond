@@ -221,7 +221,7 @@ export async function moveImage(form: FormData): Promise<void> {
 
 // Settings and homepage -------------------------------------------------------
 
-const URL_FIELDS = ["instagram", "facebook", "youtube", "tiktok", "linkedin"] as const;
+const URL_FIELDS = ["facebook", "twitter", "instagram", "youtube", "tiktok", "linkedin"] as const;
 const lines = (v: FormDataEntryValue | null) => String(v ?? "").split("\n").map((s) => s.trim()).filter(Boolean);
 const isSiteOrHttps = (v: string) => /^(\/(?!\/)|https:\/\/)/.test(v);
 

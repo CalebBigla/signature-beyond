@@ -16,7 +16,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           Demo mode: sample content only, not verified gallery information.
         </p>
       )}
-      <Header siteName={settings.siteName} logoSrc={settings.logoUrl || "/images/logo.png"} />
+      <Header siteName={settings.siteName} logoSrc={settings.logoUrl || "/images/logo.png"} social={settings.social} />
       <main id="main">{children}</main>
       <Footer settings={settings} />
       <WhatsAppButton settings={settings} />

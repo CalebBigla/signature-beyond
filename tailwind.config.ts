@@ -17,6 +17,7 @@ const config: Config = {
       fontFamily: {
         serif: ["var(--font-serif)", "Georgia", "serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        nav: ["var(--font-nav)", "var(--font-sans)", "system-ui", "sans-serif"],
       },
       fontSize: {
         eyebrow: ["0.6875rem", { lineHeight: "1rem", letterSpacing: "0.25em" }],

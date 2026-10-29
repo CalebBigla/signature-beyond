@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { WebsiteSettings } from "@/types";
-import { NAV_LINKS } from "@/lib/navigation";
+import { FOOTER_EXTRA_LINKS, NAV_LINKS } from "@/lib/navigation";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { SocialIcon } from "@/components/layout/SocialIcon";
 
 const SOCIAL_LABELS: Record<keyof WebsiteSettings["social"], string> = {
-  instagram: "Instagram",
   facebook: "Facebook",
+  twitter: "X (Twitter)",
+  instagram: "Instagram",
   youtube: "YouTube",
   tiktok: "TikTok",
   linkedin: "LinkedIn",
@@ -23,7 +24,7 @@ const firstSentence = (s: string) => s.match(/^.*?[.!?](\s|$)/)?.[0].trim() ?? s
 export function Footer({ settings }: { settings: WebsiteSettings }) {
   // Only accounts that have a URL set are shown, as icons with an accessible name (no visible text).
   const socials = (Object.keys(SOCIAL_LABELS) as (keyof typeof SOCIAL_LABELS)[]).filter((k) => settings.social[k]);
-  const explore = NAV_LINKS.filter((l) => l.href !== "/contact");
+  const explore = [...NAV_LINKS.filter((l) => l.href !== "/contact"), ...FOOTER_EXTRA_LINKS];
   const whatsapp = buildWhatsAppUrl(settings);
   const about = settings.aboutSummary.trim();
 

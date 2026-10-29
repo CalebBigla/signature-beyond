@@ -1,4 +1,4 @@
-export type SocialName = "instagram" | "facebook" | "youtube" | "tiktok" | "linkedin";
+export type SocialName = "instagram" | "facebook" | "twitter" | "youtube" | "tiktok" | "linkedin";
 
 /** Simple outline icons drawn inline, so no extra packages are needed. */
 export function SocialIcon({ name }: { name: SocialName }) {
@@ -18,6 +18,7 @@ export function SocialIcon({ name }: { name: SocialName }) {
           <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
         </>
       )}
+      {name === "twitter" && <path d="M23 4.6a9.4 9.4 0 0 1-2.7.7 4.7 4.7 0 0 0 2-2.6 9.3 9.3 0 0 1-3 1.1 4.7 4.7 0 0 0-8 4.3A13.3 13.3 0 0 1 1.7 3.2a4.7 4.7 0 0 0 1.4 6.3 4.7 4.7 0 0 1-2.1-.6 4.7 4.7 0 0 0 3.8 4.6 4.7 4.7 0 0 1-2.1.1 4.7 4.7 0 0 0 4.4 3.3A9.4 9.4 0 0 1 0 18.8 13.3 13.3 0 0 0 7.2 21c8.6 0 13.4-7.2 13.4-13.4v-.6A9.5 9.5 0 0 0 23 4.6z" />}
       {name === "tiktok" && <path d="M9 12a4 4 0 1 0 4 4V3a5 5 0 0 0 5 5" />}
       {name === "linkedin" && (
         <>

@@ -90,6 +90,7 @@ export interface Testimonial {
 export interface SocialLinks {
   instagram: string;
   facebook: string;
+  twitter: string;
   youtube: string;
   tiktok: string;
   linkedin: string;

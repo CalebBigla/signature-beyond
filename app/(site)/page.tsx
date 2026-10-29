@@ -53,10 +53,11 @@ export default async function HomePage() {
 
   const quote = testimonials[0];
   const heroIsDefault = !settings.heroImageUrl;
+  const rightIsDefault = !settings.heroImageRightUrl;
 
   return (
     <>
-      {/* Hero: edited in Admin > Homepage. Default left photo: public/images/hero.jpg. */}
+      {/* Hero: edited in Admin > Homepage. Defaults: public/images/hero.jpg (left) and background-1.jpeg (right). */}
       <HomeHero
         eyebrow={settings.heroEyebrow || (settings.establishedYear ? `Est. ${settings.establishedYear}` : "")}
         heading={settings.homeHeading}
@@ -65,7 +66,10 @@ export default async function HomePage() {
           src: settings.heroImageUrl || "/images/hero.jpg",
           alt: heroIsDefault ? "Bronze sculpture displayed in a gallery with paintings on the walls" : settings.heroImageAlt,
         }}
-        right={settings.heroImageRightUrl ? { src: settings.heroImageRightUrl, alt: settings.heroImageRightAlt } : null}
+        right={{
+          src: settings.heroImageRightUrl || "/images/background-1.jpeg",
+          alt: rightIsDefault ? "Visitors viewing paintings and sculpture in the gallery" : settings.heroImageRightAlt,
+        }}
         primary={settings.heroPrimaryLabel && settings.heroPrimaryHref ? { label: settings.heroPrimaryLabel, href: settings.heroPrimaryHref } : null}
         secondary={
           settings.heroSecondaryLabel && settings.heroSecondaryHref

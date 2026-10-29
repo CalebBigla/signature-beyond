@@ -50,7 +50,7 @@ export default async function AdminHome() {
 
   // Setup checklist: only real, checkable facts about this site.
   const checklist = [
-    { done: Boolean(settings.heroImageUrl && settings.heroImageRightUrl), label: "Upload both homepage hero images", href: "/admin/homepage" },
+    { done: Boolean(settings.heroImageUrl && settings.heroImageRightUrl), label: "Upload your own homepage hero images", href: "/admin/homepage" },
     { done: Boolean(settings.aboutSummary.trim()) && !settings.aboutSummary.includes("[Demo text]"), label: "Write the About text", href: "/admin/settings" },
     { done: Boolean(settings.whatsappNumber), label: "Add the WhatsApp number", href: "/admin/settings" },
     { done: Boolean(settings.primaryEmail && settings.address), label: "Add the email address and gallery address", href: "/admin/settings" },

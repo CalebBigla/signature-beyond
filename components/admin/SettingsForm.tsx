@@ -129,10 +129,10 @@ export function SettingsForm({ s }: { s: WebsiteSettings }) {
       ))}
 
       {panel("social", (
-        <Card title="Social media" description="Full links starting with https://. Empty ones are hidden on the website.">
+        <Card title="Social media" description="Full links starting with https://. Facebook, X (Twitter), Instagram and YouTube appear as icons in the header; all of them appear in the footer. Empty ones are hidden.">
           <div className="grid gap-5 sm:grid-cols-2">
-            {(["instagram", "facebook", "youtube", "tiktok", "linkedin"] as const).map((k) => (
-              <Field key={k} id={`social_${k}`} label={k === "youtube" ? "YouTube" : k === "tiktok" ? "TikTok" : k === "linkedin" ? "LinkedIn" : k[0].toUpperCase() + k.slice(1)}>
+            {(["facebook", "twitter", "instagram", "youtube", "tiktok", "linkedin"] as const).map((k) => (
+              <Field key={k} id={`social_${k}`} label={k === "youtube" ? "YouTube" : k === "tiktok" ? "TikTok" : k === "linkedin" ? "LinkedIn" : k === "twitter" ? "X (Twitter)" : k[0].toUpperCase() + k.slice(1)}>
                 {t(`social_${k}`, s.social[k], "url", { placeholder: "https://" })}
               </Field>
             ))}
