@@ -16,6 +16,7 @@ import { RecordCard } from "@/components/ui/RecordCard";
 import { SectionHead } from "@/components/ui/Section";
 import { ButtonLink } from "@/components/ui/Button";
 import { ArtworkCard } from "@/components/artworks/ArtworkCard";
+import { HomeHero } from "@/components/home/HomeHero";
 
 // Asymmetric gallery hang for up to six featured works (md and up). Mobile is a simple two-column grid.
 const HANG = [
@@ -55,32 +56,25 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero photo: upload a new one in Admin > Website settings, or replace public/images/hero.jpg.
-          The negative margin slides it under the transparent header. */}
-      <section className="on-dark relative isolate -mt-20 flex min-h-[88svh] items-end overflow-hidden bg-ink text-white md:-mt-24">
-        <Image
-          src={settings.heroImageUrl || "/images/hero.jpg"}
-          alt={heroIsDefault ? "Bronze sculpture displayed in a gallery with paintings on the walls" : ""}
-          fill
-          priority
-          sizes="100vw"
-          className="-z-20 object-cover"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/75 via-black/35 to-black/25 md:bg-gradient-to-r md:from-black/70 md:via-black/30 md:to-transparent" />
-        <div className="container-site pb-16 pt-40 md:pb-24">
-          {settings.establishedYear && <p className="eyebrow mb-6">Est. {settings.establishedYear}</p>}
-          <h1 className="max-w-3xl font-serif text-display font-medium">{settings.homeHeading}</h1>
-          {settings.homeIntro && <p className="mt-8 max-w-xl text-body text-white/85">{settings.homeIntro}</p>}
-          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
-            <ButtonLink href="/artworks" tone="dark">View the collection</ButtonLink>
-            {nextAuction && (
-              <ButtonLink href={`/auctions/${nextAuction.slug}`} variant="secondary" tone="dark">
-                {eventPhase(nextAuction) === "live" ? "Auction now on" : "Upcoming auction"}
-              </ButtonLink>
-            )}
-          </div>
-        </div>
-      </section>
+      {/* Hero: edited in Admin > Homepage. Default left photo: public/images/hero.jpg. */}
+      <HomeHero
+        eyebrow={settings.heroEyebrow || (settings.establishedYear ? `Est. ${settings.establishedYear}` : "")}
+        heading={settings.homeHeading}
+        intro={settings.homeIntro}
+        left={{
+          src: settings.heroImageUrl || "/images/hero.jpg",
+          alt: heroIsDefault ? "Bronze sculpture displayed in a gallery with paintings on the walls" : settings.heroImageAlt,
+        }}
+        right={settings.heroImageRightUrl ? { src: settings.heroImageRightUrl, alt: settings.heroImageRightAlt } : null}
+        primary={settings.heroPrimaryLabel && settings.heroPrimaryHref ? { label: settings.heroPrimaryLabel, href: settings.heroPrimaryHref } : null}
+        secondary={
+          settings.heroSecondaryLabel && settings.heroSecondaryHref
+            ? { label: settings.heroSecondaryLabel, href: settings.heroSecondaryHref }
+            : nextAuction
+              ? { label: eventPhase(nextAuction) === "live" ? "Auction now on" : "Upcoming auction", href: `/auctions/${nextAuction.slug}` }
+              : null
+        }
+      />
 
       {featureAuction && featurePhase && (
         <section aria-labelledby="auction-feature" className="container-site py-section">
