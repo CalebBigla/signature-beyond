@@ -1,98 +1,144 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useRef, useState, type KeyboardEvent } from "react";
 import { saveSettings, type FormState } from "@/lib/admin/actions";
 import type { WebsiteSettings } from "@/types";
+import { Card, Field, Notice, btn, inputClass } from "./ui";
+import { ImageDropzone } from "./ImageDropzone";
+import { useUnsavedGuard } from "./useUnsavedGuard";
 
-const input = "w-full rounded border border-stone-300 bg-white px-3 py-2 text-sm";
 const initial: FormState = { ok: false, message: "" };
-
-function F({ id, label, help, children }: { id: string; label: string; help?: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label htmlFor={id} className="mb-1 block text-xs text-stone-600">{label}</label>
-      {children}
-      {help && <p className="mt-1 text-xs text-stone-500">{help}</p>}
-    </div>
-  );
-}
+const TABS = [
+  { id: "general", label: "General" },
+  { id: "brand", label: "Brand" },
+  { id: "contact", label: "Contact" },
+  { id: "whatsapp", label: "WhatsApp" },
+  { id: "social", label: "Social media" },
+] as const;
+type Tab = (typeof TABS)[number]["id"];
 
 export function SettingsForm({ s }: { s: WebsiteSettings }) {
   const [state, action, pending] = useActionState(saveSettings, initial);
-  const t = (id: string, v: string | number | null, type = "text") => <input id={id} name={id} type={type} defaultValue={v ?? ""} className={input} />;
-  const area = (id: string, v: string, rows = 3) => <textarea id={id} name={id} rows={rows} defaultValue={v} className={input} />;
+  const [tab, setTab] = useState<Tab>("general");
+  const [dirty, setDirty] = useState(false);
+  const [lastState, setLastState] = useState(state);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  useUnsavedGuard(dirty && !pending);
+
+  if (state !== lastState) {
+    setLastState(state);
+    if (state.ok) setDirty(false);
+  }
+
+  const t = (id: string, v: string | number | null, type = "text", extra: Record<string, unknown> = {}) => (
+    <input id={id} name={id} type={type} defaultValue={v ?? ""} className={inputClass} {...extra} />
+  );
+  const area = (id: string, v: string, rows = 3) => <textarea id={id} name={id} rows={rows} defaultValue={v} className={inputClass} />;
+
+  // Arrow keys move between tabs (WAI-ARIA tabs pattern).
+  const onTabKey = (e: KeyboardEvent, i: number) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const next = (i + (e.key === "ArrowRight" ? 1 : -1) + TABS.length) % TABS.length;
+    setTab(TABS[next].id);
+    tabRefs.current[next]?.focus();
+  };
+
+  // Every panel stays in the form (hidden ones too), so one Save stores all tabs.
+  const panel = (id: Tab, children: React.ReactNode) => (
+    <div role="tabpanel" id={`panel-${id}`} aria-labelledby={`tab-${id}`} hidden={tab !== id} className="space-y-6">
+      {children}
+    </div>
+  );
 
   return (
-    <form action={action} className="max-w-2xl space-y-8">
-      <section className="space-y-4">
-        <h2 className="font-serif text-xl">WhatsApp</h2>
-        <F id="whatsapp_number" label="WhatsApp number" help="Digits only, with the country code. Example: 2348012345678. Leave empty to hide all WhatsApp buttons.">{t("whatsapp_number", s.whatsappNumber)}</F>
-        <F id="whatsapp_default_message" label="Default message (floating button)">{area("whatsapp_default_message", s.whatsappDefaultMessage)}</F>
-        <F id="whatsapp_artwork_template" label="Artwork enquiry message" help="Use {title} for the artwork name and {artist} for the artist. Keep the words ' by {artist}' together.">{area("whatsapp_artwork_template", s.whatsappArtworkTemplate)}</F>
-      </section>
-      <section className="space-y-4">
-        <h2 className="font-serif text-xl">Contact</h2>
-        <F id="primary_email" label="Primary email">{t("primary_email", s.primaryEmail, "email")}</F>
-        <F id="additional_emails" label="Other emails (one per line)">{area("additional_emails", s.additionalEmails.join("\n"))}</F>
-        <F id="phone_numbers" label="Phone numbers (one per line)">{area("phone_numbers", s.phoneNumbers.join("\n"))}</F>
-        <F id="address" label="Address">{area("address", s.address)}</F>
-      </section>
-      <section className="space-y-4">
-        <h2 className="font-serif text-xl">Social media</h2>
-        <p className="text-xs text-stone-500">Full links starting with https://. Empty ones are hidden on the website.</p>
-        {(["instagram", "facebook", "youtube", "tiktok", "linkedin"] as const).map((k) => (
-          <F key={k} id={`social_${k}`} label={k[0].toUpperCase() + k.slice(1)}>{t(`social_${k}`, s.social[k], "url")}</F>
-        ))}
-      </section>
-      <section className="space-y-4">
-        <h2 className="font-serif text-xl">Homepage and general</h2>
-        <F id="site_name" label="Website name">{t("site_name", s.siteName)}</F>
-        <F id="established_year" label="Year established (leave empty to hide)">{t("established_year", s.establishedYear)}</F>
-        <F id="home_heading" label="Homepage heading">{t("home_heading", s.homeHeading)}</F>
-        <F id="home_intro" label="Homepage introduction">{area("home_intro", s.homeIntro)}</F>
-        <F id="about_summary" label="About text">{area("about_summary", s.aboutSummary, 6)}</F>
-        <F id="logo" label="Logo" help="A PNG with a transparent background works best (the header is dark). If none is uploaded, the default logo is used.">
-          {s.logoUrl && (
-            <div className="mb-2 flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.logoUrl} alt="Current logo" className="h-16 w-auto rounded bg-ink p-1" />
-              <label className="text-xs"><input type="checkbox" name="remove:logo" /> Remove (use the default logo)</label>
-            </div>
-          )}
-          <input id="logo" type="file" name="file:logo" accept="image/jpeg,image/png,image/webp" className="text-sm" />
-        </F>
-        <F id="hero_image" label="Homepage hero photo" help="JPEG, PNG or WebP, up to 5 MB. Wide photos work best. If none is uploaded, the default photo is used.">
-          {s.heroImageUrl && (
-            <div className="mb-2 flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.heroImageUrl} alt="Current hero" className="h-16 w-28 rounded object-cover" />
-              <label className="text-xs"><input type="checkbox" name="remove:hero_image" /> Remove (use the default photo)</label>
-            </div>
-          )}
-          <input id="hero_image" type="file" name="file:hero_image" accept="image/jpeg,image/png,image/webp" className="text-sm" />
-        </F>
-        {([
-          ["tile_auctions", "Auctions tile photo", s.tileImages.auctions],
-          ["tile_exhibitions", "Exhibitions tile photo", s.tileImages.exhibitions],
-          ["tile_artworks", "Featured Artworks tile photo", s.tileImages.artworks],
-          ["tile_tour", "Virtual Tour tile photo", s.tileImages.tour],
-        ] as const).map(([name, label, url]) => (
-          <F key={name} id={name} label={label} help="Shown on the four tiles under the homepage hero. JPEG, PNG or WebP, up to 5 MB.">
-            {url && (
-              <div className="mb-2 flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="Current" className="h-16 w-24 rounded object-cover" />
-                <label className="text-xs"><input type="checkbox" name={`remove:${name}`} /> Remove</label>
-              </div>
-            )}
-            <input id={name} type="file" name={`file:${name}`} accept="image/jpeg,image/png,image/webp" className="text-sm" />
-          </F>
-        ))}
-        <F id="virtual_tour_url" label="Virtual tour link (leave empty to hide the tile)">{t("virtual_tour_url", s.virtualTourUrl, "url")}</F>
-      </section>
-      <div className="flex items-center gap-4">
-        <button type="submit" disabled={pending} className="rounded bg-ink px-5 py-2 text-sm text-white disabled:opacity-60">{pending ? "Saving..." : "Save settings"}</button>
-        {state.message && <p role="alert" className={`text-sm ${state.ok ? "text-green-800" : "text-red-700"}`}>{state.message}</p>}
+    <form action={action} onInput={() => setDirty(true)} onChange={() => setDirty(true)} className="space-y-6">
+      <div className="sticky top-16 z-10 -mx-4 flex flex-wrap items-end gap-3 border-b border-stone-200 bg-stone-50/95 px-4 pt-3 backdrop-blur sm:-mx-8 sm:px-8">
+        <div role="tablist" aria-label="Settings sections" className="flex flex-1 gap-5 overflow-x-auto">
+          {TABS.map((x, i) => (
+            <button
+              key={x.id}
+              ref={(el) => { tabRefs.current[i] = el; }}
+              id={`tab-${x.id}`}
+              type="button"
+              role="tab"
+              aria-selected={tab === x.id}
+              aria-controls={`panel-${x.id}`}
+              tabIndex={tab === x.id ? 0 : -1}
+              onClick={() => setTab(x.id)}
+              onKeyDown={(e) => onTabKey(e, i)}
+              className={`whitespace-nowrap border-b-2 px-1 pb-3 text-sm transition-colors ${tab === x.id ? "border-brand font-medium text-stone-800" : "border-transparent text-stone-500 hover:text-stone-800"}`}
+            >
+              {x.label}
+            </button>
+          ))}
+        </div>
+        <div className="mb-2.5 flex items-center gap-3">
+          {dirty && <span className="text-xs text-amber-700">Unsaved changes</span>}
+          <button type="submit" disabled={pending} className={btn("primary")}>{pending ? "Saving…" : "Save settings"}</button>
+        </div>
       </div>
+
+      {state.message && <Notice tone={state.ok ? "success" : "error"}>{state.message}</Notice>}
+
+      {panel("general", (
+        <Card title="General" description="Used across the website: page titles, the footer, the About page and the homepage heritage section.">
+          <div className="space-y-5">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field id="site_name" label="Website name">{t("site_name", s.siteName)}</Field>
+              <Field id="established_year" label="Year established" help="Leave empty to hide it.">{t("established_year", s.establishedYear, "text", { inputMode: "numeric", maxLength: 4 })}</Field>
+            </div>
+            <Field id="about_summary" label="About the gallery" help="Shown on the About page and the homepage. The footer uses its first sentence. Leave a blank line between paragraphs.">
+              {area("about_summary", s.aboutSummary, 8)}
+            </Field>
+          </div>
+        </Card>
+      ))}
+
+      {panel("brand", (
+        <Card title="Logo" description="A PNG with a transparent background works best: it sits on the light header and the dark footer.">
+          <div className="max-w-sm">
+            <ImageDropzone name="logo" currentUrl={s.logoUrl || null} emptyHint="Until you upload one, the built-in logo is used." aspect="aspect-[16/9]" />
+          </div>
+        </Card>
+      ))}
+
+      {panel("contact", (
+        <Card title="Contact details" description="Shown in the footer, on the Contact page and in the legal pages. Empty ones are hidden.">
+          <div className="space-y-5">
+            <Field id="primary_email" label="Main email">{t("primary_email", s.primaryEmail, "email")}</Field>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field id="additional_emails" label="Other emails" help="One per line.">{area("additional_emails", s.additionalEmails.join("\n"))}</Field>
+              <Field id="phone_numbers" label="Phone numbers" help="One per line, with the country code.">{area("phone_numbers", s.phoneNumbers.join("\n"))}</Field>
+            </div>
+            <Field id="address" label="Gallery address" help="Line breaks are kept.">{area("address", s.address, 3)}</Field>
+          </div>
+        </Card>
+      ))}
+
+      {panel("whatsapp", (
+        <Card title="WhatsApp" description="Powers the WhatsApp button and the artwork enquiry button.">
+          <div className="space-y-5">
+            <Field id="whatsapp_number" label="WhatsApp number" help="Digits only, with the country code, e.g. 2348012345678. Leave empty to hide all WhatsApp buttons.">
+              {t("whatsapp_number", s.whatsappNumber, "tel")}
+            </Field>
+            <Field id="whatsapp_default_message" label="Default message" help="Pre-filled when someone taps the floating WhatsApp button.">{area("whatsapp_default_message", s.whatsappDefaultMessage)}</Field>
+            <Field id="whatsapp_artwork_template" label="Artwork enquiry message" help="Use {title} for the artwork name and {artist} for the artist. Keep the words ' by {artist}' together.">
+              {area("whatsapp_artwork_template", s.whatsappArtworkTemplate)}
+            </Field>
+          </div>
+        </Card>
+      ))}
+
+      {panel("social", (
+        <Card title="Social media" description="Full links starting with https://. Empty ones are hidden on the website.">
+          <div className="grid gap-5 sm:grid-cols-2">
+            {(["instagram", "facebook", "youtube", "tiktok", "linkedin"] as const).map((k) => (
+              <Field key={k} id={`social_${k}`} label={k === "youtube" ? "YouTube" : k === "tiktok" ? "TikTok" : k === "linkedin" ? "LinkedIn" : k[0].toUpperCase() + k.slice(1)}>
+                {t(`social_${k}`, s.social[k], "url", { placeholder: "https://" })}
+              </Field>
+            ))}
+          </div>
+        </Card>
+      ))}
     </form>
   );
 }

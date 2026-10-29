@@ -1,14 +1,19 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getSettings } from "@/lib/services";
 import { SettingsForm } from "@/components/admin/SettingsForm";
+import { PageHeader } from "@/components/admin/ui";
 
 export default async function SettingsPage() {
   await requireAdmin();
   const settings = await getSettings();
   return (
     <>
-      <h1 className="mb-2 font-serif text-3xl">Website settings</h1>
-      <p className="mb-8 text-sm text-stone-600">These details are used across the whole website, including the WhatsApp buttons and the footer.</p>
+      <PageHeader
+        title="Website settings"
+        description={<>Details used across the whole website. The homepage hero has its own editor under <Link href="/admin/homepage" className="underline">Homepage</Link>.</>}
+        crumbs={[{ label: "Dashboard", href: "/admin" }, { label: "Website settings" }]}
+      />
       <SettingsForm s={settings} />
     </>
   );

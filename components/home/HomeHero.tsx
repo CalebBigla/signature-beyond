@@ -40,7 +40,7 @@ export function HomeHero({ eyebrow, heading, intro, left, right, primary, second
           className="-z-20 object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/35 to-black/25 md:bg-gradient-to-tr md:from-black/75 md:via-black/30 md:to-black/10" />
-        <div className={`w-full pb-16 md:pb-20 ${preview ? "pt-24" : "pt-40"} ${split ? "px-4 sm:px-6 lg:px-10 xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]" : "container-site md:pb-24"}`}>
+        <div className={`w-full pb-16 md:pb-20 ${preview ? "pt-24" : "pt-40"} ${split ? `px-4 sm:px-6 lg:px-10 ${preview ? "" : "xl:pl-[max(2.5rem,calc((100vw-80rem)/2+2.5rem))]"}` : "container-site md:pb-24"}`}>
           {eyebrow && <p className="eyebrow mb-6">{eyebrow}</p>}
           <h1 className={`max-w-3xl font-serif font-medium ${split ? "text-[clamp(2.75rem,1.5rem+3.4vw,5.25rem)] leading-[1] tracking-[-0.02em]" : "text-display"}`}>
             {heading}
