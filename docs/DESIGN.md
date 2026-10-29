@@ -23,7 +23,7 @@ Defined in `tailwind.config.ts` and mirrored as CSS variables in `app/globals.cs
 
 ## Typography
 
-- **Display serif:** Cormorant Garamond (400/500/600, with italic), via `next/font` (`font-serif`). It was kept over Playfair Display and Prata for three reasons:
+- **Display serif:** Cormorant Garamond (400/500, with italic; 600 was dropped as unused), via `next/font` (`font-serif`). It was kept over Playfair Display and Prata for three reasons:
   - Its fine, high-contrast strokes read as quieter and more "gallery" at hero sizes.
   - It has a true italic for artwork titles (Prata has none).
   - The admin already uses `font-serif`, so keeping it leaves the admin unchanged.

@@ -117,7 +117,7 @@ export default async function ArtworkPage({ params }: Params) {
                 </Link>
               </p>
             )}
-            <h1 className="mt-1 font-serif text-h1 font-medium italic">{artwork.title}</h1>
+            <h1 className="mt-1 font-serif text-h1 italic">{artwork.title}</h1>
             {artwork.year && <p className="mt-2 font-serif text-xl text-stone-600">{artwork.year}</p>}
 
             {specs.length > 0 && (
