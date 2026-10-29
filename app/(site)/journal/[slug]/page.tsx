@@ -39,7 +39,7 @@ export default async function JournalPostPage({ params }: Params) {
 
       {post.coverImageUrl && (
         <div className="container-site mt-12">
-          <div className="relative aspect-[3/2] w-full overflow-hidden bg-bone">
+          <div className="relative aspect-[3/2] w-full overflow-hidden rounded-3xl bg-bone">
             <Image src={post.coverImageUrl} alt="" fill priority sizes="(min-width: 1280px) 1200px, 100vw" className="object-cover" />
           </div>
         </div>

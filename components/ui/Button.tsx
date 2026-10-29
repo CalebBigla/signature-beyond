@@ -6,7 +6,7 @@ export type ButtonVariant = "primary" | "secondary";
 export type ButtonTone = "light" | "dark";
 
 const base =
-  "inline-flex min-h-11 items-center justify-center gap-2 text-sm font-medium tracking-wide transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full text-sm font-medium tracking-wide transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-60";
 
 const styles: Record<ButtonVariant, Record<ButtonTone, string>> = {
   // Solid, square, generous padding.

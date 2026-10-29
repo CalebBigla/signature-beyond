@@ -82,7 +82,7 @@ export function HomeHero({ eyebrow, heading, intro, image, primary, secondary, l
 
         {/* Framed image: space around it, as on a gallery wall. */}
         <div className={`px-4 pb-4 sm:px-6 sm:pb-6 md:col-span-6 md:py-8 lg:col-span-7 lg:py-10 ${imageLeft ? "md:order-1 md:pl-8 md:pr-0 lg:pl-10" : "md:pl-0 md:pr-8 lg:pr-10"}`}>
-          <div className="hero-frame relative aspect-[4/5] h-full w-full overflow-hidden bg-stone-200 sm:aspect-[4/3] md:aspect-auto">
+          <div className="hero-frame relative aspect-[4/5] h-full w-full overflow-hidden rounded-3xl bg-stone-200 sm:aspect-[4/3] md:aspect-auto">
             <motion.div style={preview || reduce ? undefined : { y: drift }} className="absolute -inset-y-[6%] inset-x-0">
               <div className="hero-zoom absolute inset-0">
               <Image

@@ -33,7 +33,7 @@ export default async function AboutPage() {
 
         {/* Gallery imagery: the homepage photo (Admin > Website settings), shown at its full width. */}
         <figure className="mt-section">
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-bone">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl bg-bone">
             <Image
               src={photo || "/images/hero.jpg"}
               alt={photo ? `Inside ${settings.siteName}` : "Bronze sculpture displayed in a gallery with paintings on the walls"}

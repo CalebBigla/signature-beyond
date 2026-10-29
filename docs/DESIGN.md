@@ -52,7 +52,8 @@ Helpers in `globals.css`:
 
 - Sections use `py-section`, which is clamp(4rem → 10rem): about 64–96px on mobile and 128–160px on desktop.
 - Use a 12-column grid (`md:grid-cols-12`) for editorial splits: image 7 / text 4 offset, or label 3 / text 8.
-- Separate content with hairlines (`border-stone-200`, 1px), not boxes. No shadows, no rounded corners. The WhatsApp button is the only exception.
+- Separate content with hairlines (`border-stone-200`, 1px), not boxes. No heavy shadows.
+- Corners are rounded: buttons and filter tags are pills (`rounded-full`), images and cards `rounded-2xl`, large feature images (hero, About, article covers) `rounded-3xl`.
 - `SectionHead` (`components/ui/Section.tsx`) is the standard section heading: eyebrow, serif title, an optional right-aligned link, and a hairline.
 - `PageBanner` is the standard page intro: eyebrow, h1, optional standfirst, hairline. It has no dark image banner.
 
@@ -67,7 +68,7 @@ Helpers in `globals.css`:
 
 There are only two variants, each with a light and a dark tone:
 
-- **Primary:** solid `ink`, white text, square corners, `px-7 py-3.5`. On dark backgrounds or photos, use `tone="dark"` (paper fill, ink text).
+- **Primary:** solid `ink`, white text, pill-shaped (`rounded-full`), `px-7 py-3.5`. On dark backgrounds or photos, use `tone="dark"` (paper fill, ink text).
 - **Secondary:** text with a 1px underline that turns `brand` and moves on hover.
 
 Use `ButtonLink` for links (external URLs open in a new tab), `Button` for `<button>`, and `buttonClass()` where you need only the classes. The minimum target height is 44px.

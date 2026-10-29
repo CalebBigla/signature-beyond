@@ -74,7 +74,7 @@ export function ArtworkFilters({ query, options }: Props) {
             <Link
               key={key}
               href={pageHref({ ...query, [key]: "" }, 1)}
-              className="inline-flex min-h-9 items-center gap-2 border border-stone-300 px-3 text-ink transition-colors hover:border-ink"
+              className="inline-flex min-h-9 items-center gap-2 rounded-full border border-stone-300 px-4 text-ink transition-colors hover:border-ink"
               aria-label={`Remove filter: ${label}`}
             >
               {label} <span aria-hidden="true">×</span>

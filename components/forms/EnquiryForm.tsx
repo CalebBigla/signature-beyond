@@ -42,7 +42,7 @@ export function EnquiryForm({ defaultSubject = "" }: { defaultSubject?: string }
       <h2 className="font-serif text-h2 font-medium">Send a message</h2>
 
       {state.message && (
-        <div ref={statusRef} tabIndex={-1} role="alert" className="border-l-2 border-red-700 bg-white px-4 py-3 text-sm text-red-700 focus:outline-none">
+        <div ref={statusRef} tabIndex={-1} role="alert" className="rounded-xl border border-red-200 bg-white px-4 py-3 text-sm text-red-700 focus:outline-none">
           {state.message}
         </div>
       )}

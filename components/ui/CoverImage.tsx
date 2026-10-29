@@ -22,7 +22,7 @@ export function CoverImage({
 }) {
   if (!url) return <PlaceholderImage className={`${aspect} w-full ${className}`} />;
   return (
-    <div className={`relative ${aspect} w-full overflow-hidden ${fit === "contain" ? "bg-bone" : ""} ${className}`}>
+    <div className={`relative ${aspect} w-full overflow-hidden rounded-2xl ${fit === "contain" ? "bg-bone" : ""} ${className}`}>
       <Image
         src={url}
         alt={alt}

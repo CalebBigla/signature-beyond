@@ -24,7 +24,7 @@ export function ArtworkCaption({ artwork, headingLevel = 3 }: { artwork: Artwork
 export function ArtworkCard({ artwork, aspect, sizes }: { artwork: Artwork; aspect?: string; sizes?: string }) {
   return (
     <Link href={`/artworks/${artwork.slug}`} className="group block">
-      <div className="overflow-hidden">
+      <div className="overflow-hidden rounded-2xl">
         <ArtworkImage artwork={artwork} aspect={aspect} sizes={sizes} />
       </div>
       <ArtworkCaption artwork={artwork} />

@@ -20,7 +20,7 @@ export function ArtworkImage({
   const main = artwork.images.find((i) => i.isMain) ?? artwork.images[0];
   if (!main) return <PlaceholderImage className={`${aspect} w-full ${className}`} />;
   return (
-    <div className={`relative ${aspect} w-full bg-bone ${className}`}>
+    <div className={`relative ${aspect} w-full overflow-hidden rounded-2xl bg-bone ${className}`}>
       <Image
         src={main.url}
         alt={main.alt || `${artwork.title}${artwork.artist ? ` by ${artwork.artist.name}` : ""}`}
