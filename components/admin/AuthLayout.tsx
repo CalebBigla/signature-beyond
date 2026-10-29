@@ -9,7 +9,7 @@ export async function AuthLayout({ title, description, children }: { title: stri
   return (
     <div className="grid min-h-screen bg-white text-stone-800 lg:grid-cols-[1fr_1.1fr]">
       <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#14110f] p-12 text-white lg:flex">
-        <Image src={s.heroImageUrl || "/images/hero.jpg"} alt="" fill sizes="45vw" className="object-cover opacity-30" />
+        <Image src={s.heroImageRightUrl || s.heroImageUrl || "/images/hero.jpg"} alt="" fill sizes="45vw" className="object-cover opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#14110f] via-[#14110f]/70 to-[#14110f]/40" />
         <Link href="/" className="relative">
           <Image src={s.logoUrl || "/images/logo.png"} alt={s.siteName} width={270} height={157} className="h-14 w-auto" priority />

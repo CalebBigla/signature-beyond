@@ -30,6 +30,7 @@ export interface SettingsRow {
   phone_numbers: string[]; address: string; virtual_tour_url: string; hero_image_path: string | null; logo_path: string | null;
   hero_image_right_path: string | null; hero_image_alt: string | null; hero_image_right_alt: string | null; hero_eyebrow: string | null;
   hero_primary_label: string | null; hero_primary_href: string | null; hero_secondary_label: string | null; hero_secondary_href: string | null;
+  hero_layout?: string | null; hero_tone?: string | null;
   tile_auctions_path: string | null; tile_exhibitions_path: string | null; tile_artworks_path: string | null; tile_tour_path: string | null; social: Partial<Record<string, string>>;
 }
 export interface FaqRow {

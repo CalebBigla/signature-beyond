@@ -278,19 +278,25 @@ export async function saveHomepage(_prev: FormState, form: FormData): Promise<Fo
   const tour = text("virtual_tour_url");
   if (tour && !/^https:\/\//.test(tour)) return fail("Virtual tour link must start with https://");
 
-  const images = await imagePatch(db, form, "site", ["hero_image", "hero_image_right", "tile_auctions", "tile_exhibitions", "tile_tour"]);
+  const layout = form.get("hero_layout") === "image-left" ? "image-left" : "image-right";
+  const tone = ["light", "bone", "dark"].includes(String(form.get("hero_tone"))) ? String(form.get("hero_tone")) : "light";
+
+  const images = await imagePatch(db, form, "site", ["hero_image_right", "tile_auctions", "tile_exhibitions", "tile_tour"]);
   if (images.error) return fail(images.error);
+  // The hero shows hero_image_right, falling back to the older hero_image. Removing it clears both,
+  // so the default photo really comes back.
+  if (images.patch && "hero_image_right_path" in images.patch && images.patch.hero_image_right_path === null) images.patch.hero_image_path = null;
 
   const { error } = await db.from("website_settings").update({
     hero_eyebrow: text("hero_eyebrow", 60), home_heading: heading, home_intro: text("home_intro", 400),
-    hero_image_alt: text("hero_image_alt"), hero_image_right_alt: text("hero_image_right_alt"),
+    hero_image_right_alt: text("hero_image_right_alt"), hero_layout: layout, hero_tone: tone,
     hero_primary_label: text("hero_primary_label", 60), hero_primary_href: text("hero_primary_href"),
     hero_secondary_label: text("hero_secondary_label", 60), hero_secondary_href: text("hero_secondary_href"),
     virtual_tour_url: tour, ...images.patch,
   }).eq("id", 1);
   if (error) {
     return fail(/column .* does not exist/i.test(error.message)
-      ? "The database needs the CMS upgrade: run supabase/migrations/003_cms_upgrade.sql in the Supabase SQL Editor, then save again."
+      ? "The database needs an update: run supabase/migrations/005_hero_layout.sql (and 003 if you have not) in the Supabase SQL Editor, then save again."
       : `Could not save the homepage: ${error.message}`);
   }
   refresh();

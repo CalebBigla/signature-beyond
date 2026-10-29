@@ -77,5 +77,8 @@ body { @apply bg-paper text-stone-800 antialiased; }
 .admin-dark .text-amber-700, .admin-dark .text-amber-800, .admin-dark .text-amber-900 { color: #fcd34d; }
 .admin-dark .text-sky-900 { color: #7dd3fc; }
 .admin-dark .text-red-800 { color: #fca5a5; }
-/* The homepage preview is the real site hero: keep its dark ink and white text in dark mode. */
-.admin-dark section.on-dark.bg-ink { background-color: rgb(20 17 15); color: #fff; }
+/* The homepage preview is the real site hero: undo the dark-mode remaps inside it so it shows true colours. */
+.site-preview { --ink: 20 17 15; }
+.admin-dark .site-preview .bg-white { background-color: #fff; }
+.admin-dark .site-preview .bg-ink { background-color: rgb(20 17 15); color: #fff; }
+.admin-dark .site-preview .text-stone-600 { color: #57534e; }

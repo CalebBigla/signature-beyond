@@ -111,9 +111,9 @@ export interface WebsiteSettings {
   phoneNumbers: string[];
   address: string;
   virtualTourUrl: string;
-  /** Homepage hero, left half (carries the text). Empty = use the default image in /public/images/hero.jpg */
+  /** Earlier hero photo (also used on the About page). Kept as a fallback for the hero image. */
   heroImageUrl: string;
-  /** Homepage hero, right half (plain image, no text). Empty = the left image spans the full width. */
+  /** Homepage hero image (the image beside the text). Empty = heroImageUrl, then the default /images/hero.jpg */
   heroImageRightUrl: string;
   heroImageAlt: string;
   heroImageRightAlt: string;
@@ -124,6 +124,10 @@ export interface WebsiteSettings {
   /** Empty label = automatic "Upcoming auction" link when one exists. */
   heroSecondaryLabel: string;
   heroSecondaryHref: string;
+  /** Which side the hero image sits on. */
+  heroLayout: "image-right" | "image-left";
+  /** Background behind the hero text. */
+  heroTone: "light" | "bone" | "dark";
   /** Logo from Storage. Empty = use the default logo in /public/images/logo.png */
   logoUrl: string;
   /** Photos for the four homepage tiles. Empty = a placeholder box is shown. */

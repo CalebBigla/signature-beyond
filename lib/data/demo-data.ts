@@ -100,6 +100,8 @@ export const demoSettings: WebsiteSettings = {
   heroPrimaryHref: "/artworks",
   heroSecondaryLabel: "",
   heroSecondaryHref: "",
+  heroLayout: "image-right",
+  heroTone: "light",
   logoUrl: "",
   tileImages: { auctions: "", exhibitions: "", artworks: "", tour: "" },
   // From the gallery's current live site (signatureandsogal / SignatureSogal). Add the YouTube channel link in Admin > Website settings.

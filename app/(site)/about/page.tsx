@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "About", description: "About Signatur
 export default async function AboutPage() {
   const settings = await getSettings();
   const paragraphs = settings.aboutSummary.split(/\n{2,}/).filter(Boolean);
-  const heroIsDefault = !settings.heroImageUrl;
+  const photo = settings.heroImageRightUrl || settings.heroImageUrl;
 
   return (
     <>
@@ -35,8 +35,8 @@ export default async function AboutPage() {
         <figure className="mt-section">
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-bone">
             <Image
-              src={settings.heroImageUrl || "/images/hero.jpg"}
-              alt={heroIsDefault ? "Bronze sculpture displayed in a gallery with paintings on the walls" : `Inside ${settings.siteName}`}
+              src={photo || "/images/hero.jpg"}
+              alt={photo ? `Inside ${settings.siteName}` : "Bronze sculpture displayed in a gallery with paintings on the walls"}
               fill
               sizes="(min-width: 1280px) 1200px, 100vw"
               className="object-cover"

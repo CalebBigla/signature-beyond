@@ -53,6 +53,8 @@ export const toSettings = (r: SettingsRow): WebsiteSettings => ({
   heroImageRightUrl: mediaUrl(r.hero_image_right_path ?? null) ?? "", heroImageAlt: r.hero_image_alt ?? "", heroImageRightAlt: r.hero_image_right_alt ?? "",
   heroEyebrow: r.hero_eyebrow ?? "", heroPrimaryLabel: r.hero_primary_label ?? "View the collection", heroPrimaryHref: r.hero_primary_href ?? "/artworks",
   heroSecondaryLabel: r.hero_secondary_label ?? "", heroSecondaryHref: r.hero_secondary_href ?? "",
+  heroLayout: r.hero_layout === "image-left" ? "image-left" : "image-right",
+  heroTone: r.hero_tone === "bone" || r.hero_tone === "dark" ? r.hero_tone : "light",
   tileImages: {
     auctions: mediaUrl(r.tile_auctions_path) ?? "", exhibitions: mediaUrl(r.tile_exhibitions_path) ?? "",
     artworks: mediaUrl(r.tile_artworks_path) ?? "", tour: mediaUrl(r.tile_tour_path) ?? "",

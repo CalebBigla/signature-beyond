@@ -52,24 +52,22 @@ export default async function HomePage() {
   const otherEx = orderedEx.slice(1, 4);
 
   const quote = testimonials[0];
-  const heroIsDefault = !settings.heroImageUrl;
-  const rightIsDefault = !settings.heroImageRightUrl;
+  const heroSrc = settings.heroImageRightUrl || settings.heroImageUrl;
+  const heroAlt = settings.heroImageRightUrl ? settings.heroImageRightAlt : settings.heroImageAlt;
 
   return (
     <>
-      {/* Hero: edited in Admin > Homepage. Defaults: public/images/hero.jpg (left) and background-1.jpeg (right). */}
+      {/* Hero: text beside an image, all edited in Admin > Homepage. Default image: public/images/hero.jpg. */}
       <HomeHero
         eyebrow={settings.heroEyebrow || (settings.establishedYear ? `Est. ${settings.establishedYear}` : "")}
         heading={settings.homeHeading}
         intro={settings.homeIntro}
-        left={{
-          src: settings.heroImageUrl || "/images/hero.jpg",
-          alt: heroIsDefault ? "Bronze sculpture displayed in a gallery with paintings on the walls" : settings.heroImageAlt,
+        image={{
+          src: heroSrc || "/images/hero.jpg",
+          alt: heroSrc ? heroAlt : "Bronze sculpture displayed in a gallery with paintings on the walls",
         }}
-        right={{
-          src: settings.heroImageRightUrl || "/images/background-1.jpeg",
-          alt: rightIsDefault ? "Visitors viewing paintings and sculpture in the gallery" : settings.heroImageRightAlt,
-        }}
+        layout={settings.heroLayout}
+        tone={settings.heroTone}
         primary={settings.heroPrimaryLabel && settings.heroPrimaryHref ? { label: settings.heroPrimaryLabel, href: settings.heroPrimaryHref } : null}
         secondary={
           settings.heroSecondaryLabel && settings.heroSecondaryHref
