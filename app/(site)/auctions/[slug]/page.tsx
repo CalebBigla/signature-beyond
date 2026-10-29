@@ -10,6 +10,7 @@ import { ArtworkCard } from "@/components/artworks/ArtworkCard";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHead } from "@/components/ui/Section";
+import { Reveal } from "@/components/ui/Reveal";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -36,7 +37,7 @@ export default async function AuctionPage({ params }: Params) {
   const facts = [
     auction.startDate && { label: auction.endDate && auction.endDate !== auction.startDate ? "Opens" : "Date", value: formatDate(auction.startDate) },
     auction.endDate && auction.endDate !== auction.startDate && { label: "Closes", value: formatDate(auction.endDate) },
-    { label: "Status", value: PHASE_LABELS[phase] },
+    PHASE_LABELS[phase] && { label: "Status", value: PHASE_LABELS[phase] },
     artworks.length > 0 && { label: "Works", value: String(artworks.length) },
   ].filter((f): f is { label: string; value: string } => Boolean(f));
 
@@ -99,16 +100,14 @@ export default async function AuctionPage({ params }: Params) {
         </div>
       </div>
 
-      <section aria-labelledby="works" className="container-site mt-section">
-        <SectionHead id="works" eyebrow="The sale" title="Works in this auction" />
-        {artworks.length === 0 ? (
-          <p className="text-body text-stone-600">No artworks have been linked to this auction yet.</p>
-        ) : (
+      {artworks.length > 0 && (
+        <section aria-labelledby="works" className="container-site mt-section">
+          <SectionHead id="works" eyebrow="The sale" title="Works in this auction" />
           <ul className="grid grid-cols-2 gap-x-5 gap-y-14 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4">
-            {artworks.map((a) => <li key={a.id}><ArtworkCard artwork={a} sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw" /></li>)}
+            {artworks.map((a, i) => <li key={a.id}><Reveal delay={(i % 4) * 0.06}><ArtworkCard artwork={a} sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw" /></Reveal></li>)}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
     </article>
   );
 }

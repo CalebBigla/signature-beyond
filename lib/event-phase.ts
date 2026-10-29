@@ -16,7 +16,7 @@ export const PHASE_LABELS: Record<EventPhase, string> = {
   upcoming: "Upcoming",
   live: "Now on",
   past: "Past",
-  undated: "Dates to be confirmed",
+  undated: "",
 };
 
 /** Upcoming/live first (soonest first), then past (most recent first), then undated. */

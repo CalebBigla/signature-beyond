@@ -10,7 +10,7 @@ export function formatPrice(a: Artwork): string {
 }
 
 export function formatDateRange(start: string | null, end: string | null): string {
-  if (!start) return "Dates to be confirmed";
+  if (!start) return "";
   const fmt = (d: string) =>
     new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   return end ? `${fmt(start)} – ${fmt(end)}` : fmt(start);

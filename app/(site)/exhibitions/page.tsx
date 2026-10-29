@@ -22,7 +22,7 @@ export default async function ExhibitionsPage() {
     <>
       <PageBanner eyebrow="Exhibitions" title="Exhibitions" subtitle="A rich archive of past exhibitions and current showcases." />
       <div className="container-site pb-section">
-        {exhibitions.length === 0 && <EmptyNote>No exhibitions have been published yet.</EmptyNote>}
+        {exhibitions.length === 0 && <EmptyNote>New exhibitions will be announced here.</EmptyNote>}
 
         {current.length > 0 && (
           <section aria-labelledby="current-ex" className="mb-section space-y-20">

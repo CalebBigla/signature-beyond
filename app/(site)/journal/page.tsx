@@ -20,7 +20,7 @@ export default async function JournalPage() {
       <PageBanner eyebrow="Journal" title="Journal" subtitle="Art news, stories and insights from the world of African art." />
       <div className="container-site pb-section">
         {!lead ? (
-          <EmptyNote>No journal articles have been published yet.</EmptyNote>
+          <EmptyNote>Stories from the gallery will appear here soon.</EmptyNote>
         ) : (
           <>
             {/* Magazine-style lead story, then the rest in a three-column index. */}

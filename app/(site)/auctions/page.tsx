@@ -40,7 +40,7 @@ export default async function AuctionsPage() {
     <>
       <PageBanner eyebrow="Auctions" title="Auctions" subtitle="Explore our past and upcoming auctions featuring exceptional African art." />
       <div className="container-site pb-section">
-        {auctions.length === 0 && <EmptyNote>No auctions have been published yet.</EmptyNote>}
+        {auctions.length === 0 && <EmptyNote>Upcoming auctions will be announced here. <a href="/contact?subject=Auction%20updates" className="underline underline-offset-4">Ask to be notified</a>.</EmptyNote>}
 
         {current.length > 0 && (
           <section aria-labelledby="current-auctions" className="mb-section">
@@ -57,7 +57,7 @@ export default async function AuctionsPage() {
                       <div className="md:col-span-6 lg:col-span-4 lg:col-start-9">
                         <p className="eyebrow mb-5">{phase === "live" ? "Now on" : "Upcoming"}</p>
                         <h3 className="font-serif text-h1 font-medium">{a.title}</h3>
-                        <p className="mt-6 border-t border-stone-200 pt-4 font-serif text-h3 text-ink">{formatDateRange(a.startDate, a.endDate)}</p>
+                        {a.startDate && <p className="mt-6 border-t border-stone-200 pt-4 font-serif text-h3 text-ink">{formatDateRange(a.startDate, a.endDate)}</p>}
                         <ButtonLink href={`/auctions/${a.slug}`} className="mt-10">View catalogue</ButtonLink>
                       </div>
                     </Reveal>

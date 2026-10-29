@@ -94,7 +94,7 @@ export default async function HomePage() {
                 {featurePhase === "upcoming" ? "Upcoming auction" : featurePhase === "live" ? "Auction now on" : featurePhase === "past" ? "Most recent auction" : "Auction"}
               </p>
               <h2 id="auction-feature" className="font-serif text-h1 font-medium">{featureAuction.title}</h2>
-              <p className="mt-6 border-t border-stone-200 pt-4 text-sm text-ink">{formatDateRange(featureAuction.startDate, featureAuction.endDate)}</p>
+              {featureAuction.startDate && <p className="mt-6 border-t border-stone-200 pt-4 text-sm text-ink">{formatDateRange(featureAuction.startDate, featureAuction.endDate)}</p>}
               {featureAuction.description && <p className="mt-6 text-body text-stone-700">{excerpt(featureAuction.description)}</p>}
               <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
                 <ButtonLink href={`/auctions/${featureAuction.slug}`}>
@@ -137,7 +137,7 @@ export default async function HomePage() {
                   <p className="eyebrow mb-4">{featureExPhase === "live" ? "Current exhibition" : featureExPhase === "upcoming" ? "Upcoming exhibition" : "Exhibition"}</p>
                   <h3 className="font-serif text-h2 font-medium transition-colors group-hover:text-brand-deep">{featureEx.title}</h3>
                   <p className="mt-4 text-sm text-stone-700">
-                    {featureEx.startDate ? formatDateRange(featureEx.startDate, featureEx.endDate) : featureEx.year ?? "Dates to be confirmed"}
+                    {featureEx.startDate ? formatDateRange(featureEx.startDate, featureEx.endDate) : featureEx.year ?? ""}
                   </p>
                   {featureEx.description && <p className="mt-5 text-body text-stone-700">{excerpt(featureEx.description, 180)}</p>}
                   <span className="mt-8 inline-flex min-h-11 items-center text-sm underline decoration-stone-400 underline-offset-[6px] group-hover:decoration-brand">View exhibition</span>

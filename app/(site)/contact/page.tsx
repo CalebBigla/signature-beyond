@@ -14,7 +14,6 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
   const [s, params] = await Promise.all([getSettings(), searchParams]);
   const whatsapp = buildWhatsAppUrl(s);
   const emails = [s.primaryEmail, ...s.additionalEmails].filter(Boolean);
-  const hasAnything = Boolean(whatsapp || emails.length || s.phoneNumbers.length || s.address);
   const mapUrl = s.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}` : null;
 
   return (
@@ -22,9 +21,6 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
       <PageBanner eyebrow="Contact" title="Contact the gallery" subtitle="We would love to hear from you." />
       <div className="container-site grid gap-16 pb-section lg:grid-cols-12">
         <aside aria-label="Gallery contact details" className="space-y-10 lg:col-span-4">
-          {!hasAnything && (
-            <p className="border-y border-stone-200 py-6 text-sm text-stone-600">Contact details have not been added yet. Add them in website settings.</p>
-          )}
           {s.address && (
             <div>
               <h2 className="eyebrow">Visit</h2>

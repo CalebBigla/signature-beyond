@@ -16,7 +16,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "Signature Beyond", template: "%s | Signature Beyond" },
   description,
-  openGraph: { type: "website", siteName: "Signature Beyond", title: "Signature Beyond", description },
+  openGraph: {
+    type: "website", siteName: "Signature Beyond", title: "Signature Beyond", description,
+    // Default share image; pages with their own photo (artworks, auctions, journal) override it.
+    images: [{ url: "/images/hero.jpg", alt: "Bronze sculpture in the Signature Beyond gallery" }],
+  },
+  twitter: { card: "summary_large_image" },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
     : undefined,

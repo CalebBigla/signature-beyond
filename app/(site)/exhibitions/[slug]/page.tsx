@@ -7,6 +7,7 @@ import { PHASE_LABELS, eventPhase } from "@/lib/event-phase";
 import { ArtworkCard } from "@/components/artworks/ArtworkCard";
 import { CoverImage } from "@/components/ui/CoverImage";
 import { SectionHead } from "@/components/ui/Section";
+import { Reveal } from "@/components/ui/Reveal";
 import type { Artist } from "@/types";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -73,24 +74,18 @@ export default async function ExhibitionPage({ params }: Params) {
         </div>
         <div className="prose-gallery md:col-span-8">
           <h2 className="sr-only">About the exhibition</h2>
-          {ex.description ? (
-            ex.description.split(/\n{2,}/).map((p, i) => <p key={i} className={i === 0 ? "font-serif text-[1.375rem] leading-relaxed text-ink" : undefined}>{p}</p>)
-          ) : (
-            <p className="text-stone-600">Description to be confirmed.</p>
-          )}
+          {ex.description?.split(/\n{2,}/).map((p, i) => <p key={i} className={i === 0 ? "font-serif text-[1.375rem] leading-relaxed text-ink" : undefined}>{p}</p>)}
         </div>
       </div>
 
-      <section aria-labelledby="ex-works" className="container-site mt-section">
-        <SectionHead id="ex-works" eyebrow="On view" title="Works in this exhibition" />
-        {artworks.length === 0 ? (
-          <p className="text-body text-stone-600">No artworks have been linked to this exhibition yet.</p>
-        ) : (
+      {artworks.length > 0 && (
+        <section aria-labelledby="ex-works" className="container-site mt-section">
+          <SectionHead id="ex-works" eyebrow="On view" title="Works in this exhibition" />
           <ul className="grid grid-cols-2 gap-x-5 gap-y-14 md:grid-cols-3 md:gap-x-8 lg:grid-cols-4">
-            {artworks.map((a) => <li key={a.id}><ArtworkCard artwork={a} sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw" /></li>)}
+            {artworks.map((a, i) => <li key={a.id}><Reveal delay={(i % 4) * 0.06}><ArtworkCard artwork={a} sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 50vw" /></Reveal></li>)}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
     </article>
   );
 }

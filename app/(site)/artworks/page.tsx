@@ -45,7 +45,7 @@ export default async function ArtworksPage({
             <div className="border-y border-stone-200 py-16 text-center">
               <p className="font-serif text-h3">{all.length === 0 ? "The collection is being prepared." : "No works match these filters."}</p>
               <p className="mt-3 text-sm text-stone-600">
-                {all.length === 0 ? "No artworks have been published yet." : <>Try removing a filter, or <Link href="/artworks" className="underline underline-offset-4">view all works</Link>.</>}
+                {all.length === 0 ? <>For available works, please <Link href="/contact?subject=Available%20works" className="underline underline-offset-4">contact the gallery</Link>.</> : <>Try removing a filter, or <Link href="/artworks" className="underline underline-offset-4">view all works</Link>.</>}
               </p>
             </div>
           ) : (
