@@ -302,8 +302,15 @@ export async function saveHomepage(_prev: FormState, form: FormData): Promise<Fo
 export async function login(_prev: { error: string }, form: FormData): Promise<{ error: string }> {
   if (isDemoMode) return { error: "Demo mode: connect Supabase to enable login." };
   const db = await createClient();
-  const { error } = await db.auth.signInWithPassword({ email: String(form.get("email") ?? ""), password: String(form.get("password") ?? "") });
-  if (error) return { error: "Wrong email or password." };
+  const email = String(form.get("email") ?? "").trim();
+  const { error } = await db.auth.signInWithPassword({ email, password: String(form.get("password") ?? "") });
+  if (error) {
+    // Name the cases an admin can fix; everything else stays generic so accounts cannot be probed.
+    if (error.code === "email_not_confirmed") return { error: "This account's email is not confirmed yet. Run supabase/migrations/002_make_first_admin.sql (it confirms the account), or confirm the user in Supabase > Authentication > Users." };
+    if (error.status === 429) return { error: "Too many attempts. Please wait a minute and try again." };
+    if (error.code !== "invalid_credentials") return { error: `Sign-in failed: ${error.message}` };
+    return { error: "Wrong email or password." };
+  }
   redirect("/admin");
 }
 
