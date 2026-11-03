@@ -24,7 +24,9 @@ export const toArtwork = (r: ArtworkRow): Artwork => ({
 export const toAuction = (r: AuctionRow): Auction => ({
   id: r.id, slug: r.slug, title: r.title, startDate: r.start_date, endDate: r.end_date,
   description: r.description, coverImageUrl: mediaUrl(r.cover_image_path),
-  artworkIds: (r.auction_artworks ?? []).map((x) => x.artwork_id), featured: r.featured, status: r.status,
+  artworkIds: (r.auction_artworks ?? []).map((x) => x.artwork_id),
+  pdfUrl: mediaUrl(r.pdf_path ?? null),
+  featured: r.featured, status: r.status,
 });
 
 export const toExhibition = (r: ExhibitionRow): Exhibition => ({

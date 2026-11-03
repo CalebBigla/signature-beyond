@@ -11,6 +11,7 @@ import { CoverImage } from "@/components/ui/CoverImage";
 import { ButtonLink } from "@/components/ui/Button";
 import { SectionHead } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
+import { ReadMore } from "@/components/documents/ReadMore";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -82,6 +83,7 @@ export default async function AuctionPage({ params }: Params) {
                 {auction.description.split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)}
               </div>
             )}
+            {auction.pdfUrl && <div className="mt-8"><ReadMore href={`/auctions/${auction.slug}/read`} /></div>}
           </div>
         </div>
 

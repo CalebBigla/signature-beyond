@@ -71,7 +71,8 @@ export const RESOURCES: ResourceDef[] = [
       { name: "title", label: "Title", type: "text", required: true }, SLUG,
       { name: "start_date", label: "Start date", type: "date" }, { name: "end_date", label: "End date", type: "date" },
       COVER, FEATURED,
-      { name: "description", label: "Description", type: "textarea", rows: 8 }, STATUS,
+      { name: "description", label: "Description", type: "textarea", rows: 8 },
+      PDF("Optional, e.g. the sale catalogue. Visitors open it with \"Read more\"."), STATUS,
     ],
   },
   {

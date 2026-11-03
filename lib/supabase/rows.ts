@@ -10,7 +10,7 @@ export interface ArtworkRow {
 }
 export interface AuctionRow {
   id: string; slug: string; title: string; start_date: string | null; end_date: string | null;
-  description: string | null; cover_image_path: string | null; featured: boolean; status: PublishStatus;
+  description: string | null; cover_image_path: string | null; featured: boolean; status: PublishStatus; pdf_path?: string | null;
   auction_artworks: { artwork_id: string }[];
 }
 export interface ExhibitionRow {

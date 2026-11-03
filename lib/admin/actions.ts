@@ -66,7 +66,7 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
     if (f.type === "pdf") {
       if (form.get(`uploading:${f.name}`)) return fail("Please wait for the PDF to finish uploading, then save again.");
       const path = String(form.get(`pdf:${f.name}`) ?? "").trim();
-      // Only write the column when the PDF changed, so saving keeps working before 007 is installed.
+      // Only write the column when the PDF changed, so saving keeps working before 007 and 008 are installed.
       if (path === String(form.get(`pdforig:${f.name}`) ?? "")) continue;
       if (path && !/^pdfs\/[a-z]+\/[0-9a-f-]{36}\.pdf$/.test(path)) return fail("The PDF upload did not complete. Please choose the file again.");
       payload[f.name] = path || null;
@@ -98,7 +98,7 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
     : db.from(res.table).insert(payload).select("id").single();
   const { data, error } = await query;
   if (error) return fail(error.code === "23505" ? "That web address (slug) is already used. Please change it."
-    : /pdf_path/.test(error.message) ? "The database needs an update for PDFs: run supabase/migrations/007_pdf_documents.sql in the Supabase SQL Editor, then save again."
+    : /pdf_path/.test(error.message) ? "The database needs an update for PDFs: run supabase/migrations/007_pdf_documents.sql and 008_auction_pdf.sql in the Supabase SQL Editor, then save again."
     : `Could not save: ${error.message}`);
   const recordId = (data as { id: string }).id;
 

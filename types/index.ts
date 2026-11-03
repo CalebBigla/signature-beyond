@@ -48,6 +48,8 @@ export interface Auction {
   description: string | null;
   coverImageUrl: string | null;
   artworkIds: string[];
+  /** Optional PDF (e.g. the sale catalogue), opened from "Read more". */
+  pdfUrl?: string | null;
   featured: boolean;
   status: PublishStatus;
   isDemo?: boolean;
